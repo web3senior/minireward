@@ -1,6 +1,6 @@
 import { useEffect, useState, Suspense, useRef } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
-import ABI from './../abi/Pigmint.json'
+import ABI from './../abi/MiniReward.json'
 import Web3 from 'web3'
 import styles from './Admin.module.scss'
 
@@ -197,6 +197,7 @@ function Admin() {
   return (
     <div className={`${styles.page} ms-motion-slideDownIn`}>
       <Toaster />
+      <a href={`./`}>Back</a>
       <div className={`__container`} data-width={`xlarge`}>
       <div className={`grid grid--fit grid--gap-1 w-100`} style={{ '--data-width': `400px` }}>
       

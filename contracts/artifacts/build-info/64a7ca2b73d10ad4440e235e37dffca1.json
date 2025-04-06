@@ -1,0 +1,336 @@
+{
+	"id": "64a7ca2b73d10ad4440e235e37dffca1",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.28",
+	"solcLongVersion": "0.8.28+commit.7893614a",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"Event.sol": {
+				"content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\nevent RewardGiven(address indexed owner, address indexed rewardToken, uint256 amount, uint256 amountPerClaim, uint256 period);\r\nevent RewardClaimed(address indexed claimer, address indexed from, uint256 indexed amount);"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			},
+			"remappings": []
+		}
+	},
+	"output": {
+		"sources": {
+			"Event.sol": {
+				"ast": {
+					"absolutePath": "Event.sol",
+					"exportedSymbols": {
+						"RewardClaimed": [
+							21
+						],
+						"RewardGiven": [
+							13
+						]
+					},
+					"id": 22,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".28"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "33:24:0"
+						},
+						{
+							"anonymous": false,
+							"eventSelector": "734320a3490e6dc2de8ee69e7a92d17b4720aab3f79a0178ac31076c76cc71d1",
+							"id": 13,
+							"name": "RewardGiven",
+							"nameLocation": "67:11:0",
+							"nodeType": "EventDefinition",
+							"parameters": {
+								"id": 12,
+								"nodeType": "ParameterList",
+								"parameters": [
+									{
+										"constant": false,
+										"id": 3,
+										"indexed": true,
+										"mutability": "mutable",
+										"name": "owner",
+										"nameLocation": "95:5:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 13,
+										"src": "79:21:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_address",
+											"typeString": "address"
+										},
+										"typeName": {
+											"id": 2,
+											"name": "address",
+											"nodeType": "ElementaryTypeName",
+											"src": "79:7:0",
+											"stateMutability": "nonpayable",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address",
+												"typeString": "address"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 5,
+										"indexed": true,
+										"mutability": "mutable",
+										"name": "rewardToken",
+										"nameLocation": "118:11:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 13,
+										"src": "102:27:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_address",
+											"typeString": "address"
+										},
+										"typeName": {
+											"id": 4,
+											"name": "address",
+											"nodeType": "ElementaryTypeName",
+											"src": "102:7:0",
+											"stateMutability": "nonpayable",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address",
+												"typeString": "address"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 7,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "amount",
+										"nameLocation": "139:6:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 13,
+										"src": "131:14:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 6,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "131:7:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 9,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "amountPerClaim",
+										"nameLocation": "155:14:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 13,
+										"src": "147:22:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 8,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "147:7:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 11,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "period",
+										"nameLocation": "179:6:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 13,
+										"src": "171:14:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 10,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "171:7:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									}
+								],
+								"src": "78:108:0"
+							},
+							"src": "61:126:0"
+						},
+						{
+							"anonymous": false,
+							"eventSelector": "0aa4d283470c904c551d18bb894d37e17674920f3261a7f854be501e25f421b7",
+							"id": 21,
+							"name": "RewardClaimed",
+							"nameLocation": "195:13:0",
+							"nodeType": "EventDefinition",
+							"parameters": {
+								"id": 20,
+								"nodeType": "ParameterList",
+								"parameters": [
+									{
+										"constant": false,
+										"id": 15,
+										"indexed": true,
+										"mutability": "mutable",
+										"name": "claimer",
+										"nameLocation": "225:7:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 21,
+										"src": "209:23:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_address",
+											"typeString": "address"
+										},
+										"typeName": {
+											"id": 14,
+											"name": "address",
+											"nodeType": "ElementaryTypeName",
+											"src": "209:7:0",
+											"stateMutability": "nonpayable",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address",
+												"typeString": "address"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 17,
+										"indexed": true,
+										"mutability": "mutable",
+										"name": "from",
+										"nameLocation": "250:4:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 21,
+										"src": "234:20:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_address",
+											"typeString": "address"
+										},
+										"typeName": {
+											"id": 16,
+											"name": "address",
+											"nodeType": "ElementaryTypeName",
+											"src": "234:7:0",
+											"stateMutability": "nonpayable",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address",
+												"typeString": "address"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 19,
+										"indexed": true,
+										"mutability": "mutable",
+										"name": "amount",
+										"nameLocation": "272:6:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 21,
+										"src": "256:22:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 18,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "256:7:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									}
+								],
+								"src": "208:71:0"
+							},
+							"src": "189:91:0"
+						}
+					],
+					"src": "33:247:0"
+				},
+				"id": 0
+			}
+		}
+	}
+}

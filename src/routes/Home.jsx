@@ -3,9 +3,9 @@ import toast, { Toaster } from 'react-hot-toast'
 import Metadata from '../assets/metadata.json'
 import { useUpProvider } from '../contexts/UpProvider'
 import { PinataSDK } from 'pinata'
-import ABI from '../abi/Pigmint.json'
-import LYXbadge from './../assets/⏣.svg'
-import PpageLogo from './../assets/upage.svg'
+import ABI from '../abi/MiniReward.json'
+import Coin from './../assets/coin.svg'
+import DefaultPFP from './../assets/default-pfp.svg'
 import DracosEyes from './../assets/dracos-eyes.png'
 
 import Default from './../assets/default.png'
@@ -200,7 +200,7 @@ function Home() {
     const contract = new web3.eth.Contract(ABI, import.meta.env.VITE_CONTRACT)
 
     const t = toast.loading(`Waiting for transaction's confirmation`)
-//dddd, MMMM Do YYYY , h:mm:ss a
+    //dddd, MMMM Do YYYY , h:mm:ss a
     const metadata = JSON.stringify({
       LSP4Metadata: {
         name: 'Pigmint',
@@ -326,7 +326,69 @@ function Home() {
     })
   }
 
-  const handleSearchProfile = async (addr) => {
+  const downloadCanvas = function (tokenId) {
+    const link = document.createElement('a')
+    link.download = `${tokenId}.png`
+    link.href = canvasRef.current.toDataURL()
+    link.click()
+    link.remove()
+  }
+
+  useEffect(() => {
+    console.clear()
+
+    // getMaxSupply().then((res) => {
+    //   console.log(res)
+    //   setMaxSupply(_.toNumber(res))
+    // })
+
+    auth.accounts[0] === auth.contextAccounts[0] ? setUserType(`owner`) : setUserType(`visitor`)
+  }, [])
+
+  return (
+    <>
+      <div className={`${styles.page}`}>
+        <Toaster />
+
+        {auth.walletConnected && <Profile addr={auth.accounts[0]} />}
+
+        <main className={`${styles.main}`}>
+          <div className={`__container`} data-width={`small`}>
+            <figure className={`d-f-c grid--gap-1`}>
+              <img src={Coin} className={`rounded`} style={{ width: `84px` }} alt="" />
+              <figcaption>200</figcaption>
+            </figure>
+
+            <h2>⚡ 24h / 10 $ARATTA</h2>
+            <small>{auth.walletConnected ? `Next claim: In 18 hours` : `-`}</small>
+
+            <div className={`${styles.progressbar}`}>
+              <div />
+              <span>70 $ARATTA</span>
+            </div>
+
+            {auth.walletConnected && (
+              <div className={`${styles.action} d-f-c flex-row w-100`}>
+                <button onClick={(e) => mintPigMood(e)}>Claim</button>
+                <button onClick={(e) => navigate(`deposit`)}>Deposit</button>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </>
+  )
+}
+
+/**
+ * Profile
+ * @param {String} param0 
+ * @returns 
+ */
+const Profile = ({ addr }) => {
+  const [data, setData] = useState()
+
+  const getProfile = async (addr) => {
     const myHeaders = new Headers()
     myHeaders.append('Content-Type', `application/json`)
     myHeaders.append('Accept', `application/json`)
@@ -341,6 +403,7 @@ function Home() {
     limit: 1
   ) {
     fullName
+    name
     id
     profileImages {
       src
@@ -354,140 +417,34 @@ function Home() {
       throw new Response('Failed to ', { status: 500 })
     }
     const data = await response.json()
-    setProfile(data)
+    setData(data)
     return data
   }
 
-  const downloadCanvas = function (tokenId) {
-    const link = document.createElement('a')
-    link.download = `${tokenId}.png`
-    link.href = canvasRef.current.toDataURL()
-    link.click()
-    link.remove()
-  }
-
   useEffect(() => {
-    console.clear()
-    // handleSearchProfile(auth.accounts[0])
-    getTokenId(auth.contextAccounts[0])
-
-    // add the image to canvas
-    // var can = document.getElementById('canvas')
-    // var ctx = can.getContext('2d')
-
-    // var img = new Image()
-    // img.onload = function () {
-    //   ctx.drawImage(img, 0, 0, can.width, can.height)
-    // }
-    // img.crossOrigin = `anonymous`
-    // img.src = Default //`${import.meta.env.VITE_IPFS_GATEWAY}${dataContent.LSP4Metadata.images[0][0].url.replace('ipfs://', '').replace('://', '')}`
-
-    // const svgns = 'http://www.w3.org/2000/svg'
-    // const image = document.createElementNS(svgns, 'image')
-    // image.setAttribute('href', Default)
-    // image.setAttribute('width', 400)
-    // image.setAttribute('height', 400)
-    // image.setAttribute('x', 0)
-    // image.setAttribute('y', 0)
-    // moodRef.current.appendChild(image)
-
-    // getMaxSupply().then((res) => {
-    //   console.log(res)
-    //   setMaxSupply(_.toNumber(res))
-    // })
-
-    auth.accounts[0] === auth.contextAccounts[0] ? setUserType(`owner`) : setUserType(`visitor`)
+    getProfile(addr).then(console.log)
   }, [])
+
+  if (!data)
+    return (
+      <>
+        <figure className={`${styles.pfp} d-f-c flex-column grid--gap-050`}>
+          <img alt={`Default PFP`} src={DefaultPFP} className={`rounded`} />
+          <figcaption>@username</figcaption>
+        </figure>
+      </>
+    )
 
   return (
     <>
-      <div className={`${styles.page} __container`} data-width={`xlarge`}>
-        <Toaster />
-
-        {/* {profile && (
-          <>
-            <figure>
-              <img
-                src={`${profile.data.search_profiles[0].profileImages.length > 0 ? profile.data.search_profiles[0].profileImages[0].src : 'https://ipfs.io/ipfs/bafkreihdpxu5e77tfkekpq24wtu4pplhdw3ssdvuwatexs42hyxeh3enei'}`}
-                className={`rounded`}
-                style={{ width: `48px` }}
-                alt=""
-              />
-            </figure>
-          </>
-        )} */}
-
-        {auth.walletConnected && (
-          <>
-            <h2>How are you feeling today?</h2>
-
-            <p className={`d-flex grid--gap-025`}>
-              <svg width="17" height="19" viewBox="0 0 17 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M11.3845 16C10.8 16 10.3013 15.7936 9.8885 15.3808C9.47567 14.968 9.26925 14.4692 9.26925 13.8845C9.26925 13.3 9.47567 12.8014 9.8885 12.3885C10.3013 11.9757 10.8 11.7693 11.3845 11.7693C11.9692 11.7693 12.4679 11.9757 12.8807 12.3885C13.2936 12.8014 13.5 13.3 13.5 13.8845C13.5 14.4692 13.2936 14.968 12.8807 15.3808C12.4679 15.7936 11.9692 16 11.3845 16ZM2.1155 19C1.65517 19 1.27083 18.8459 0.9625 18.5375C0.654167 18.2292 0.5 17.8449 0.5 17.3845V4.61554C0.5 4.1552 0.654167 3.77087 0.9625 3.46254C1.27083 3.1542 1.65517 3.00004 2.1155 3.00004H3.8845V0.769287H4.9615V3.00004H12.1155V0.769287H13.1155V3.00004H14.8845C15.3448 3.00004 15.7292 3.1542 16.0375 3.46254C16.3458 3.77087 16.5 4.1552 16.5 4.61554V17.3845C16.5 17.8449 16.3458 18.2292 16.0375 18.5375C15.7292 18.8459 15.3448 19 14.8845 19H2.1155ZM2.1155 18H14.8845C15.0385 18 15.1796 17.936 15.3077 17.8078C15.4359 17.6796 15.5 17.5385 15.5 17.3845V8.61554H1.5V17.3845C1.5 17.5385 1.56408 17.6796 1.69225 17.8078C1.82042 17.936 1.9615 18 2.1155 18Z"
-                  fill="black"
-                  fill-opacity="0.6"
-                />
-              </svg>
-              <small>Today: {new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' })}</small>
-            </p>
-          </>
-        )}
-
-        <div className={`${styles.form} d-f-c flex-column grid--gap-025 mt-30`}>
-          <div className={`${styles['board']}`}>
-            <span>{token && token.LSP4Metadata.attributes[1].value}</span>
-            {/* <svg ref={SVG} viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-              <g ref={moodRef} name={`mood`} />
-            </svg> */}
-            <figure>
-              <img src={`${import.meta.env.VITE_IPFS_GATEWAY}${mood.filter((item) => item.name.toLowerCase() === activeMood.toLowerCase())[0].images[0].url.replace(`ipfs://`, '')}`} />
-            </figure>
-          </div>
-
-          <h2>{activeMood}</h2>
-          <small>{token && token.LSP4Metadata.attributes[2].value}</small>
-        </div>
-
-        {auth.walletConnected && (
-          <>
-            <ul className={`${styles.slider} d-flex flex-column`}>
-              <li className={`d-flex grid--gap-050`}>
-                {mood.map((item, i) => {
-                  return (
-                    <img
-                      src={`${import.meta.env.VITE_IPFS_GATEWAY}${item.images[0].url.replace(`ipfs://`, '')}`}
-                      title={item.name}
-                      onClick={() => {
-                        setActiveMood(item.name)
-                        document.querySelectorAll(`#moodSelector`).forEach((item) => item.setAttribute('data-active', false))
-                        document.querySelector(`.${item.name.toLowerCase()}`).setAttribute('data-active', true)
-                      }}
-                      className={`animate__animated animate__zoomIn`}
-                      style={{ animationDelay: `0s`, '--animate-duration': `${400 * (i + 1)}ms` }}
-                    />
-                  )
-                })}
-              </li>
-
-              <li className={`d-flex align-items-center justify-content-between grid--gap-050`}>
-                <span id={`moodSelector`} className={`angry`} />
-                <span id={`moodSelector`} className={`sad`} />
-                <span id={`moodSelector`} className={`sus`} />
-                <span id={`moodSelector`} className={`buidl`} />
-                <span id={`moodSelector`} className={`love`} />
-                <span id={`moodSelector`} className={`rich`} />
-              </li>
-            </ul>
-
-            <div className={`${styles.form} d-flex flex-column grid--gap-025`}>
-              <input type="text" name="" id="" placeholder={`Note`} onChange={(e) => setNote(e.target.value)} />
-              <button onClick={(e) => mintPigMood(e)}>{token ? `Update Mood` : `Mint Mood`}</button>
-            </div>
-          </>
-        )}
-        <small style={{ color: `rgba(0,0,0,.7)` }}>To use Pigmint, please clone it to your grid first!</small>
-      </div>
+      <figure className={`${styles.pfp} d-f-c flex-column grid--gap-050`}>
+        <img
+          alt={data.data.search_profiles[0].fullName}
+          src={`${data.data.search_profiles[0].profileImages.length > 0 ? data.data.search_profiles[0].profileImages[0].src : 'https://ipfs.io/ipfs/bafkreihdpxu5e77tfkekpq24wtu4pplhdw3ssdvuwatexs42hyxeh3enei'}`}
+          className={`rounded`}
+        />
+        <figcaption>@{data.data.search_profiles[0].name}</figcaption>
+      </figure>
     </>
   )
 }

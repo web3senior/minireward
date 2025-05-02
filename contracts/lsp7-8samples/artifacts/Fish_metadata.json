@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.28+commit.7893614a"
+		"version": "0.8.29+commit.ab55807c"
 	},
 	"language": "Solidity",
 	"output": {
@@ -1473,11 +1473,11 @@
 			]
 		},
 		"lsp7-8samples/fish-sample.sol": {
-			"keccak256": "0x773acb48ef3ace0e6d546cc86c5923651db6b3936f11f1234885d4ead25b9227",
+			"keccak256": "0x10e9acc094a2afbdee5112196f64503161dc27aad34bec2358b9109288bd2dc6",
 			"license": "Apache-2.0",
 			"urls": [
-				"bzz-raw://0e452905e66dc7a169d2bb27ed3cd1129b0e431c6ec6cb02df6f285ad911a5d4",
-				"dweb:/ipfs/QmS1tqoGWNi1JNqJWz7hE51G3fhL45mTf5uoFJWfCtUChf"
+				"bzz-raw://56c65b91f7308b6ebc5974dd30801feac2d6b81f7dc6b3db98b9b5fd04bdd46b",
+				"dweb:/ipfs/QmVq3RNDoXAwd557J8Mo7jjvjtbRnY4TCWtPBzBRUFbnGQ"
 			]
 		}
 	},

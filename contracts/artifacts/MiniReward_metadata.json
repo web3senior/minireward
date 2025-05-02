@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.28+commit.7893614a"
+		"version": "0.8.29+commit.ab55807c"
 	},
 	"language": "Solidity",
 	"output": {
@@ -24,17 +24,31 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
-						"name": "totalAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "authorizedAmount",
+						"name": "",
 						"type": "uint256"
 					}
 				],
-				"name": "NotAuthorizedAmount",
+				"name": "InsufficientBalance",
 				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "profileOwner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bool",
+						"name": "enabled",
+						"type": "bool"
+					}
+				],
+				"name": "ClaimingStatusChanged",
+				"type": "event"
 			},
 			{
 				"anonymous": false,
@@ -74,7 +88,7 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "claimer",
+						"name": "visitor",
 						"type": "address"
 					},
 					{
@@ -99,31 +113,31 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "owner",
+						"name": "sender",
 						"type": "address"
 					},
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "rewardToken",
+						"name": "rewardTokenAddress",
 						"type": "address"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "totalAmount",
 						"type": "uint256"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "amountPerClaim",
+						"name": "rewardAmount",
 						"type": "uint256"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "period",
+						"name": "claimInterval",
 						"type": "uint256"
 					}
 				],
@@ -196,22 +210,22 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "rewardToken",
+						"name": "_rewardTokenAddress",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "_totalAmount",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amountPerClaim",
+						"name": "_rewardAmount",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
-						"name": "period",
+						"name": "_interval",
 						"type": "uint256"
 					}
 				],
@@ -237,7 +251,7 @@
 				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "claimedTime",
+						"name": "nextClaim",
 						"type": "uint256"
 					},
 					{
@@ -301,31 +315,44 @@
 				"outputs": [
 					{
 						"internalType": "address",
-						"name": "rewardToken",
+						"name": "rewardTokenAddress",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "totalAmount",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amountPerClaim",
+						"name": "rewardAmount",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
-						"name": "period",
+						"name": "claimInterval",
 						"type": "uint256"
 					},
 					{
 						"internalType": "bool",
-						"name": "isPaused",
+						"name": "isClaimingEnabled",
 						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bool",
+						"name": "_enabled",
+						"type": "bool"
+					}
+				],
+				"name": "setClaimingStatus",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -372,24 +399,6 @@
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bool",
-						"name": "force",
-						"type": "bool"
-					},
-					{
-						"internalType": "bytes",
-						"name": "data",
-						"type": "bytes"
-					}
-				],
-				"name": "withdrawLSP7",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
 			}
 		],
 		"devdoc": {
@@ -410,8 +419,30 @@
 				]
 			},
 			"events": {
+				"ClaimingStatusChanged(address,bool)": {
+					"params": {
+						"enabled": "The new claiming status.",
+						"profileOwner": "The owner of profile/ sender."
+					}
+				},
 				"Paused(address)": {
 					"details": "Emitted when the pause is triggered by `account`."
+				},
+				"RewardClaimed(address,address,uint256)": {
+					"params": {
+						"amount": "The amount of tokens/LYX claimed.",
+						"from": "The address of profile/ host.",
+						"visitor": "The address of the visitor."
+					}
+				},
+				"RewardGiven(address,address,uint256,uint256,uint256)": {
+					"params": {
+						"claimInterval": "The interval between claims.",
+						"rewardAmount": "The amount of tokens/LYX to reward visitors.",
+						"rewardTokenAddress": "The reward token.",
+						"sender": "The address of the visitor.",
+						"totalAmount": "The amount of tokens/LYX."
+					}
 				},
 				"Unpaused(address)": {
 					"details": "Emitted when the pause is lifted by `account`."
@@ -436,9 +467,20 @@
 			"version": 1
 		},
 		"userdoc": {
+			"events": {
+				"ClaimingStatusChanged(address,bool)": {
+					"notice": "Emitted when the claiming status is changed."
+				},
+				"RewardClaimed(address,address,uint256)": {
+					"notice": "Emitted when a visitor claims a reward."
+				},
+				"RewardGiven(address,address,uint256,uint256,uint256)": {
+					"notice": "Emitted when a profile add/ update reward."
+				}
+			},
 			"kind": "user",
 			"methods": {},
-			"notice": "A smart contract enabling users to post daily updates and comments, leveraging LUKSO's Universal Profiles.",
+			"notice": "A smart contract to reward visitors of a LUKSO profile with LSP7 tokens or LYX.",
 			"version": 1
 		}
 	},
@@ -474,6 +516,14 @@
 				"dweb:/ipfs/QmPHXMSXj99XjSVM21YsY6aNtLLjLVXDbyN76J5HQYvvrz"
 			]
 		},
+		"@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+			"keccak256": "0xa535a5df777d44e945dd24aa43a11e44b024140fc340ad0dfe42acf4002aade1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://41319e7f621f2dc3733511332c4fd032f8e32ad2aa7fd6f665c19741d9941a34",
+				"dweb:/ipfs/QmcYR3bd862GD1Bc7jwrU9bGxrhUu5na1oP964bDCu2id1"
+			]
+		},
 		"@openzeppelin/contracts/utils/Context.sol": {
 			"keccak256": "0xa92e4fa126feb6907daa0513ddd816b2eb91f30a808de54f63c17d0e162c3439",
 			"license": "MIT",
@@ -483,11 +533,11 @@
 			]
 		},
 		"@openzeppelin/contracts/utils/Pausable.sol": {
-			"keccak256": "0xb2e5f50762c27fb4b123e3619c3c02bdcba5e515309382e5bfb6f7d6486510bd",
+			"keccak256": "0xdb484371dfbb848cb6f5d70464e9ac9b2900e4164ead76bbce4fef0b44bcc68f",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://1a4b83328c98d518a2699c2cbe9e9b055e78aa57fa8639f1b88deb8b3750b5dc",
-				"dweb:/ipfs/QmXdcYj5v7zQxXFPULShHkR5p4Wa2zYuupbHnFdV3cHYtc"
+				"bzz-raw://f9d6f6f6600a2bec622f699081b58350873b5e63ce05464d17d674a290bb8a7c",
+				"dweb:/ipfs/QmQKVzSQY1PM3Bid4QhgVVZyx6B4Jx7XgaQzLKHj38vJz8"
 			]
 		},
 		"Error.sol": {
@@ -499,19 +549,19 @@
 			]
 		},
 		"Event.sol": {
-			"keccak256": "0x731bef80a8eaf209579a3f56dc5d6ac7c92631237e983563f4fbbd07b343997d",
+			"keccak256": "0x47c1b5129854275e4e103876ebe690308d3ffe41e6ccc3e99682e839e0605ba3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://ca4325ada8e363a3770e124d37014e5bd6f7c0336e82ac52442b40894b345fac",
-				"dweb:/ipfs/QmU8sbCHxYERSABs3oHqv67t4TTQb85cQmsRqBAgRiHonR"
+				"bzz-raw://f0569724edbf2f95729b869f264ad05d5ebfc7b20bc0ead1057c7540d4955aa5",
+				"dweb:/ipfs/QmV5wkjXc91YC6T4e7h7zCXgUSTGZ6tL6McDUjGAYw2JNH"
 			]
 		},
 		"MiniReward.sol": {
-			"keccak256": "0xfc3a5c12aa6330d3ffd21ce8c8c8fd9bebf6fc618edd5762cde9492d67294f6d",
+			"keccak256": "0xf177b400805ec75fef6410dcada7506c9327e60160b06367db824080fa450ba3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://755845fb70c3e33d14059f170d6d2202e4b03a9d3c4d1a28ac4c648064ec2b2b",
-				"dweb:/ipfs/QmS7rtku7wqqewoivRfYcKoGzp8x8kCiTRbFBNzTdaaFbS"
+				"bzz-raw://13abf84692e278322e4efd094e042c46438aab04e0758ff81bf6705e3f5dfea3",
+				"dweb:/ipfs/QmXPLwbNRqXnzHu4Wu1GaKxsgEQVNwKyH9aFPNTyj8B4Gw"
 			]
 		}
 	},

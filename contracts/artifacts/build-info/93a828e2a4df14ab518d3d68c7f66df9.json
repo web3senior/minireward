@@ -1,5 +1,5 @@
 {
-	"id": "735ec24f89200b20cc8e9389c810bd7e",
+	"id": "93a828e2a4df14ab518d3d68c7f66df9",
 	"_format": "hh-sol-build-info-1",
 	"solcVersion": "0.8.29",
 	"solcLongVersion": "0.8.29+commit.ab55807c",
@@ -7,7 +7,7 @@
 		"language": "Solidity",
 		"sources": {
 			"Event.sol": {
-				"content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\n/**\r\n* @notice Emitted when a profile add/ update reward.\r\n* @param sender The address of the visitor.\r\n* @param rewardTokenAddress The reward token.\r\n* @param totalAmount The amount of tokens/LYX.\r\n* @param rewardAmount The amount of tokens/LYX to reward visitors.\r\n* @param claimInterval The interval between claims.\r\n*/\r\nevent RewardGiven(address indexed sender, address indexed rewardTokenAddress, uint256 totalAmount, uint256 rewardAmount, uint256 claimInterval);\r\n\r\n/**\r\n* @notice Emitted when a visitor claims a reward.\r\n* @param visitor The address of the visitor.\r\n* @param from The address of profile/ host.\r\n* @param amount The amount of tokens/LYX claimed.\r\n*/\r\nevent RewardClaimed(address indexed visitor, address indexed from, uint256 indexed amount);\r\n\r\n/**\r\n* @notice Emitted when the claiming status is changed.\r\n* @param profileOwner The owner of profile/ sender.\r\n* @param enabled The new claiming status.\r\n*/\r\nevent ClaimingStatusChanged(address profileOwner, bool enabled);\r\n"
+				"content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\n/**\r\n* @notice Emitted when a profile add/ update reward.\r\n* @param sender The address of the visitor.\r\n* @param rewardTokenAddress The reward token.\r\n* @param totalAmount The amount of tokens/LYX.\r\n* @param rewardAmount The amount of tokens/LYX to reward visitors.\r\n* @param claimInterval The interval between claims.\r\n*/\r\nevent RewardGiven(address indexed sender, address indexed rewardTokenAddress, uint256 totalAmount, uint256 rewardAmount, uint256 claimInterval);\r\n\r\n/**\r\n* @notice Emitted when a visitor claims a reward.\r\n* @param visitor The address of the visitor.\r\n* @param from The address of profile/ host.\r\n* @param remainderAmount The remainder amount of tokens/LYX claimed.\r\n*/\r\nevent RewardClaimed(address indexed visitor, address indexed from, address indexed rewardTokenAddress, uint256 remainderAmount);\r\n\r\n/**\r\n* @notice Emitted when the claiming status is changed.\r\n* @param profileOwner The owner of profile/ sender.\r\n* @param enabled The new claiming status.\r\n*/\r\nevent ClaimingStatusChanged(address profileOwner, bool enabled);\r\n\r\n/**\r\n* @notice Emitted when the claiming status is changed.\r\n* @param sender The owner of profile/ sender.\r\n* @param rewardTokenAddress The reward token address.\r\n* @param remainderAmount The remainder amount of reward token address.\r\n*/\r\nevent Withdrawn(address sender, address rewardTokenAddress, uint remainderAmount);\r\n"
 			}
 		},
 		"settings": {
@@ -45,16 +45,19 @@
 					"absolutePath": "Event.sol",
 					"exportedSymbols": {
 						"ClaimingStatusChanged": [
-							30
+							32
 						],
 						"RewardClaimed": [
-							23
+							25
 						],
 						"RewardGiven": [
 							14
+						],
+						"Withdrawn": [
+							41
 						]
 					},
-					"id": 31,
+					"id": 42,
 					"license": "MIT",
 					"nodeType": "SourceUnit",
 					"nodes": [
@@ -238,16 +241,16 @@
 							"documentation": {
 								"id": 15,
 								"nodeType": "StructuredDocumentation",
-								"src": "533:200:0",
-								"text": " @notice Emitted when a visitor claims a reward.\n @param visitor The address of the visitor.\n @param from The address of profile/ host.\n @param amount The amount of tokens/LYX claimed."
+								"src": "533:219:0",
+								"text": " @notice Emitted when a visitor claims a reward.\n @param visitor The address of the visitor.\n @param from The address of profile/ host.\n @param remainderAmount The remainder amount of tokens/LYX claimed."
 							},
-							"eventSelector": "0aa4d283470c904c551d18bb894d37e17674920f3261a7f854be501e25f421b7",
-							"id": 23,
+							"eventSelector": "2422cac5e23c46c890fdcf42d0c64757409df6832174df639337558f09d99c68",
+							"id": 25,
 							"name": "RewardClaimed",
-							"nameLocation": "741:13:0",
+							"nameLocation": "760:13:0",
 							"nodeType": "EventDefinition",
 							"parameters": {
-								"id": 22,
+								"id": 24,
 								"nodeType": "ParameterList",
 								"parameters": [
 									{
@@ -256,10 +259,10 @@
 										"indexed": true,
 										"mutability": "mutable",
 										"name": "visitor",
-										"nameLocation": "771:7:0",
+										"nameLocation": "790:7:0",
 										"nodeType": "VariableDeclaration",
-										"scope": 23,
-										"src": "755:23:0",
+										"scope": 25,
+										"src": "774:23:0",
 										"stateVariable": false,
 										"storageLocation": "default",
 										"typeDescriptions": {
@@ -270,7 +273,7 @@
 											"id": 16,
 											"name": "address",
 											"nodeType": "ElementaryTypeName",
-											"src": "755:7:0",
+											"src": "774:7:0",
 											"stateMutability": "nonpayable",
 											"typeDescriptions": {
 												"typeIdentifier": "t_address",
@@ -285,10 +288,10 @@
 										"indexed": true,
 										"mutability": "mutable",
 										"name": "from",
-										"nameLocation": "796:4:0",
+										"nameLocation": "815:4:0",
 										"nodeType": "VariableDeclaration",
-										"scope": 23,
-										"src": "780:20:0",
+										"scope": 25,
+										"src": "799:20:0",
 										"stateVariable": false,
 										"storageLocation": "default",
 										"typeDescriptions": {
@@ -299,7 +302,7 @@
 											"id": 18,
 											"name": "address",
 											"nodeType": "ElementaryTypeName",
-											"src": "780:7:0",
+											"src": "799:7:0",
 											"stateMutability": "nonpayable",
 											"typeDescriptions": {
 												"typeIdentifier": "t_address",
@@ -313,61 +316,11 @@
 										"id": 21,
 										"indexed": true,
 										"mutability": "mutable",
-										"name": "amount",
-										"nameLocation": "818:6:0",
+										"name": "rewardTokenAddress",
+										"nameLocation": "837:18:0",
 										"nodeType": "VariableDeclaration",
-										"scope": 23,
-										"src": "802:22:0",
-										"stateVariable": false,
-										"storageLocation": "default",
-										"typeDescriptions": {
-											"typeIdentifier": "t_uint256",
-											"typeString": "uint256"
-										},
-										"typeName": {
-											"id": 20,
-											"name": "uint256",
-											"nodeType": "ElementaryTypeName",
-											"src": "802:7:0",
-											"typeDescriptions": {
-												"typeIdentifier": "t_uint256",
-												"typeString": "uint256"
-											}
-										},
-										"visibility": "internal"
-									}
-								],
-								"src": "754:71:0"
-							},
-							"src": "735:91:0"
-						},
-						{
-							"anonymous": false,
-							"documentation": {
-								"id": 24,
-								"nodeType": "StructuredDocumentation",
-								"src": "830:159:0",
-								"text": " @notice Emitted when the claiming status is changed.\n @param profileOwner The owner of profile/ sender.\n @param enabled The new claiming status."
-							},
-							"eventSelector": "c4e849566ee6d0165f9aaea8b470449e6e706f62e1780da3691cb466902dbd47",
-							"id": 30,
-							"name": "ClaimingStatusChanged",
-							"nameLocation": "997:21:0",
-							"nodeType": "EventDefinition",
-							"parameters": {
-								"id": 29,
-								"nodeType": "ParameterList",
-								"parameters": [
-									{
-										"constant": false,
-										"id": 26,
-										"indexed": false,
-										"mutability": "mutable",
-										"name": "profileOwner",
-										"nameLocation": "1027:12:0",
-										"nodeType": "VariableDeclaration",
-										"scope": 30,
-										"src": "1019:20:0",
+										"scope": 25,
+										"src": "821:34:0",
 										"stateVariable": false,
 										"storageLocation": "default",
 										"typeDescriptions": {
@@ -375,10 +328,10 @@
 											"typeString": "address"
 										},
 										"typeName": {
-											"id": 25,
+											"id": 20,
 											"name": "address",
 											"nodeType": "ElementaryTypeName",
-											"src": "1019:7:0",
+											"src": "821:7:0",
 											"stateMutability": "nonpayable",
 											"typeDescriptions": {
 												"typeIdentifier": "t_address",
@@ -389,14 +342,93 @@
 									},
 									{
 										"constant": false,
+										"id": 23,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "remainderAmount",
+										"nameLocation": "865:15:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 25,
+										"src": "857:23:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 22,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "857:7:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									}
+								],
+								"src": "773:108:0"
+							},
+							"src": "754:128:0"
+						},
+						{
+							"anonymous": false,
+							"documentation": {
+								"id": 26,
+								"nodeType": "StructuredDocumentation",
+								"src": "886:159:0",
+								"text": " @notice Emitted when the claiming status is changed.\n @param profileOwner The owner of profile/ sender.\n @param enabled The new claiming status."
+							},
+							"eventSelector": "c4e849566ee6d0165f9aaea8b470449e6e706f62e1780da3691cb466902dbd47",
+							"id": 32,
+							"name": "ClaimingStatusChanged",
+							"nameLocation": "1053:21:0",
+							"nodeType": "EventDefinition",
+							"parameters": {
+								"id": 31,
+								"nodeType": "ParameterList",
+								"parameters": [
+									{
+										"constant": false,
 										"id": 28,
 										"indexed": false,
 										"mutability": "mutable",
-										"name": "enabled",
-										"nameLocation": "1046:7:0",
+										"name": "profileOwner",
+										"nameLocation": "1083:12:0",
 										"nodeType": "VariableDeclaration",
-										"scope": 30,
-										"src": "1041:12:0",
+										"scope": 32,
+										"src": "1075:20:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_address",
+											"typeString": "address"
+										},
+										"typeName": {
+											"id": 27,
+											"name": "address",
+											"nodeType": "ElementaryTypeName",
+											"src": "1075:7:0",
+											"stateMutability": "nonpayable",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address",
+												"typeString": "address"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 30,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "enabled",
+										"nameLocation": "1102:7:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 32,
+										"src": "1097:12:0",
 										"stateVariable": false,
 										"storageLocation": "default",
 										"typeDescriptions": {
@@ -404,10 +436,10 @@
 											"typeString": "bool"
 										},
 										"typeName": {
-											"id": 27,
+											"id": 29,
 											"name": "bool",
 											"nodeType": "ElementaryTypeName",
-											"src": "1041:4:0",
+											"src": "1097:4:0",
 											"typeDescriptions": {
 												"typeIdentifier": "t_bool",
 												"typeString": "bool"
@@ -416,12 +448,120 @@
 										"visibility": "internal"
 									}
 								],
-								"src": "1018:36:0"
+								"src": "1074:36:0"
 							},
-							"src": "991:64:0"
+							"src": "1047:64:0"
+						},
+						{
+							"anonymous": false,
+							"documentation": {
+								"id": 33,
+								"nodeType": "StructuredDocumentation",
+								"src": "1115:237:0",
+								"text": " @notice Emitted when the claiming status is changed.\n @param sender The owner of profile/ sender.\n @param rewardTokenAddress The reward token address.\n @param remainderAmount The remainder amount of reward token address."
+							},
+							"eventSelector": "d1c19fbcd4551a5edfb66d43d2e337c04837afda3482b42bdf569a8fccdae5fb",
+							"id": 41,
+							"name": "Withdrawn",
+							"nameLocation": "1360:9:0",
+							"nodeType": "EventDefinition",
+							"parameters": {
+								"id": 40,
+								"nodeType": "ParameterList",
+								"parameters": [
+									{
+										"constant": false,
+										"id": 35,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "sender",
+										"nameLocation": "1378:6:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 41,
+										"src": "1370:14:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_address",
+											"typeString": "address"
+										},
+										"typeName": {
+											"id": 34,
+											"name": "address",
+											"nodeType": "ElementaryTypeName",
+											"src": "1370:7:0",
+											"stateMutability": "nonpayable",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address",
+												"typeString": "address"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 37,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "rewardTokenAddress",
+										"nameLocation": "1394:18:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 41,
+										"src": "1386:26:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_address",
+											"typeString": "address"
+										},
+										"typeName": {
+											"id": 36,
+											"name": "address",
+											"nodeType": "ElementaryTypeName",
+											"src": "1386:7:0",
+											"stateMutability": "nonpayable",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address",
+												"typeString": "address"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 39,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "remainderAmount",
+										"nameLocation": "1419:15:0",
+										"nodeType": "VariableDeclaration",
+										"scope": 41,
+										"src": "1414:20:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 38,
+											"name": "uint",
+											"nodeType": "ElementaryTypeName",
+											"src": "1414:4:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									}
+								],
+								"src": "1369:66:0"
+							},
+							"src": "1354:82:0"
 						}
 					],
-					"src": "33:1024:0"
+					"src": "33:1405:0"
 				},
 				"id": 0
 			}

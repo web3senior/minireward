@@ -21,6 +21,7 @@ contract MiniReward is Ownable, Pausable, ReentrancyGuard {
     struct rewardPoolStruct {
         address rewardTokenAddress; // The address of the LSP7 token.
         uint256 totalAmount; // The amount of tokens to reward profiles.
+        uint256 remainderAmount; // The amount of tokens left.
         uint256 rewardAmount; // The amount of tokens/LYX to reward per claim.
         uint256 claimInterval; // The interval between claims
         bool isClaimingEnabled; // Flag to enable/disable claiming.
@@ -55,52 +56,50 @@ contract MiniReward is Ownable, Pausable, ReentrancyGuard {
         // Send the old token to the owner(refresh the poll)
         if (rewards[_msgSender()].rewardAmount > 0) transferLSP7("");
 
-        // uint256 authorizedAmount = ILSP7(rewardTokenAddress).authorizedAmountFor(address(this), _msgSender());
-        // if (authorizedAmount < amount) revert NotAuthorizedAmount(amount, authorizedAmount);
-
         ILSP7(_rewardTokenAddress).transfer(_msgSender(), address(this), _totalAmount, true, "");
 
         rewards[_msgSender()].rewardTokenAddress = _rewardTokenAddress;
-        rewards[_msgSender()].totalAmount = rewards[_msgSender()].rewardAmount + _totalAmount;
+        rewards[_msgSender()].totalAmount = _totalAmount;
+        rewards[_msgSender()].remainderAmount = _totalAmount;
         rewards[_msgSender()].rewardAmount = _rewardAmount;
-        rewards[_msgSender()].claimInterval = _interval * 3 minutes; // TODOOOOO change this WARNING
+        rewards[_msgSender()].claimInterval = _interval * 1 hours;
         rewards[_msgSender()].isClaimingEnabled = true;
 
         emit RewardGiven(_msgSender(), _rewardTokenAddress, _totalAmount, _rewardAmount, _interval);
     }
 
-    function claimReward(
-        address from,
-        bool force,
-        bytes memory data
-    ) public {
+    function claimReward(address from, bytes memory data) public whenNotPaused nonReentrant {
         address rewardTokenAddress = rewards[from].rewardTokenAddress;
         uint256 totalAmount = rewards[from].totalAmount;
+        uint256 remainderAmount = rewards[from].remainderAmount;
         uint256 rewardAmount = rewards[from].rewardAmount;
         uint256 claimInterval = rewards[from].claimInterval;
         bool isClaimingEnabled = rewards[from].isClaimingEnabled;
 
         require(isClaimingEnabled, "Claiming is currently disabled");
-        require(rewardAmount >= totalAmount, InsufficientBalance(totalAmount)); // Check if reward amount is greater than total amount.
+        require(remainderAmount >= rewardAmount, InsufficientBalance(remainderAmount)); // Check if reward amount is greater than total amount.
 
         require(hasClaimed[_msgSender()][from].nextClaim < block.timestamp, "Reward already claimed");
 
-        ILSP7(rewardTokenAddress).transfer(address(this), _msgSender(), rewardAmount, force, data);
-        rewards[from].totalAmount -= rewardAmount;
+        ILSP7(rewardTokenAddress).transfer(address(this), _msgSender(), rewardAmount, false, data);
+        rewards[from].remainderAmount -= rewardAmount;
 
         hasClaimed[_msgSender()][from].nextClaim = block.timestamp + claimInterval;
         hasClaimed[_msgSender()][from].counter += 1;
 
-        emit RewardClaimed(_msgSender(), from, totalAmount);
+        emit RewardClaimed(_msgSender(), from, rewardTokenAddress, remainderAmount);
     }
 
-    function transferLSP7(bytes memory data) private {
-        ILSP7(rewards[_msgSender()].rewardTokenAddress).transfer(address(this), _msgSender(), rewards[_msgSender()].totalAmount, true, data); // The address must be a profile (ERC725Account)
+    function transferLSP7(bytes memory data) public {
+        ILSP7(rewards[_msgSender()].rewardTokenAddress).transfer(address(this), _msgSender(), rewards[_msgSender()].remainderAmount, false, data); // The address must be a profile (ERC725Account)
         rewards[_msgSender()].rewardTokenAddress = address(0);
         rewards[_msgSender()].totalAmount = 0;
+        rewards[_msgSender()].remainderAmount = 0;
         rewards[_msgSender()].rewardAmount = 0;
         rewards[_msgSender()].claimInterval = 0;
         rewards[_msgSender()].isClaimingEnabled = true;
+
+        emit Withdrawn(_msgSender(), rewards[_msgSender()].rewardTokenAddress, rewards[_msgSender()].remainderAmount);
     }
 
     function withdraw() public onlyOwner {

@@ -8,15 +8,15 @@ import "./_error.sol";
 
 /// @title Fish
 /// @author Aratta Labs
-/// @notice Fish token
-/// @dev You will find the deployed contract addresses on the official website
-/// @custom:emoji 🦭
+/// @notice Aratta Labs token/ LSP7
+/// @dev Deployed contract addresses are available in the project repository.
+/// @custom:emoji 🎯
 /// @custom:security-contact atenyun@gmail.com
-contract Fish is LSP7Mintable {
+contract ARATTA is LSP7Mintable {
     uint256 public constant tokenSupplyCap = 500_000_000 ether;
 
-    constructor() LSP7Mintable("Fish", "FISH", msg.sender, _LSP4_TOKEN_TYPE_TOKEN, false) {
-        mint(msg.sender, 500_000_000 * 10**decimals(), true, "");
+    constructor() LSP7Mintable("ARATTA", "ARATTA", msg.sender, _LSP4_TOKEN_TYPE_TOKEN, false) {
+        mint(msg.sender, 420_000_000 * 10**decimals(), true, "");
     }
 
     function _mint(

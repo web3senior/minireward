@@ -4,6 +4,7 @@ import Metadata from '../assets/metadata.json'
 import { useUpProvider } from '../contexts/UpProvider'
 import { PinataSDK } from 'pinata'
 import ABI from '../abi/MiniReward.json'
+import ABILSP7 from '../abi/lsp7.json'
 import Coin from './../assets/coin.svg'
 import PpageLogo from './../assets/upage.svg'
 import DracosEyes from './../assets/dracos-eyes.png'
@@ -18,6 +19,7 @@ import IconView from './../assets/icon-view.svg'
 import Web3 from 'web3'
 import styles from './Deposit.module.scss'
 import { useNavigate } from 'react-router'
+import { deploylessCallViaFactoryBytecode } from 'viem'
 
 const pinata = new PinataSDK({
   pinataJwt: import.meta.env.VITE_PINATA_API_KEY,
@@ -25,118 +27,23 @@ const pinata = new PinataSDK({
 })
 
 function Deposit() {
-  const [mood, setMood] = useState([
-    {
-      name: 'Angry',
-      images: [
-        {
-          width: 1112,
-          height: 1112,
-          url: 'ipfs://bafkreibjjyryubnmzrcdat4h4f2p6oms2eezw6iq763brj3fsoi5rvoo6e',
-          verification: {
-            method: 'keccak256(bytes)',
-            data: '0xc7ca5419d2a569a8f5c46f9e617f7fe275de55a05fb80a38fcd14669f1fb8bc0',
-          },
-        },
-      ],
-    },
-    {
-      name: 'Sad',
-      images: [
-        {
-          width: 1112,
-          height: 1112,
-          url: 'ipfs://bafkreif37kz424t2lebb22nakb3t6utebh3duv5q7g2ran3kdn3bny4bru',
-          verification: {
-            method: 'keccak256(bytes)',
-            data: '0x692dcc3251713ce6680600277290a8e1f61f65d60d63355062e98fe1ca8d121c',
-          },
-        },
-      ],
-    },
-    {
-      name: 'Sus',
-      images: [
-        {
-          width: 1112,
-          height: 1112,
-          url: 'ipfs://bafkreid23wtnfpgooxktlwq3ff7ocgjw3hasjqksdld7msqxbugxwf4yzu',
-          verification: {
-            method: 'keccak256(bytes)',
-            data: '0xbc6c8d6f7a6a110fe32af1ffaa1e5e3e2242707adfeb74a838a773544179592f',
-          },
-        },
-      ],
-    },
-    {
-      name: 'Buidl',
-      images: [
-        {
-          width: 1112,
-          height: 1112,
-          url: 'ipfs://bafkreibz6j226qcxrgwsegdy7yv4qfublqy32bujzk7vhd4ahwom7pksme',
-          verification: {
-            method: 'keccak256(bytes)',
-            data: '0x64335677ce8d183a0631122b92394117ef23878703c0c165a9f9743423596158',
-          },
-        },
-      ],
-    },
-    {
-      name: 'Love',
-      images: [
-        {
-          width: 1112,
-          height: 1112,
-          url: 'ipfs://bafkreihbavlqkqd3wlvsxcgpiqnr3rftsperumvorqn7lclzehpjuxfyra',
-          verification: {
-            method: 'keccak256(bytes)',
-            data: '0x7456a0245e83f6432067733bba3ea29d617f990a984c8bc36594bd7de859b3d5',
-          },
-        },
-      ],
-    },
-    {
-      name: 'Rich',
-      images: [
-        {
-          width: 1112,
-          height: 1112,
-          url: 'ipfs://bafybeihcguemrbcwpxvj6njhe2b3sxbxrbibfhmde74uiyftl7bewyrora',
-          verification: {
-            method: 'keccak256(bytes)',
-            data: '0xb4da9d70a2370f96ca5aa6dc2ce267eb0642ab27809f45ba8c005bec99ca082e',
-          },
-        },
-      ],
-    },
-  ])
-  const [activeMood, setActiveMood] = useState(`Rich`)
-  const [note, setNote] = useState(``)
   const [userType, setUserType] = useState()
-  const [token, setToken] = useState()
-  const [profile, setProfile] = useState()
-  const [showWhitelist, setShowWhitelist] = useState(false)
-  const [whitelist, setWhitelist] = useState([])
-  const [swipeCount, setSwipeCount] = useState(0)
-
-  const [freeMintCount, setFreeMintCount] = useState(0)
+  const [status, setStatus] = useState()
+  const [reward, setReward] = useState()
+  const [rewardTokenAddress, setRewardTokenAddress] = useState()
+  const [totalAmount, setTotalAmount] = useState()
+  const [rewardAmount, setRewardAmount] = useState()
+  const [claimInterval, setClaimInterval] = useState()
+  const [lsp7list, setLsp7list] = useState([])
 
   const canvasRef = useRef()
   const navigate = useNavigate()
 
   const auth = useUpProvider()
 
-  const web3Readonly = new Web3(import.meta.env.VITE_LUKSO_PROVIDER)
+  const web3Readonly = new Web3(auth.provider)
   const _ = web3Readonly.utils
   const contractReadonly = new web3Readonly.eth.Contract(ABI, import.meta.env.VITE_CONTRACT)
-
-  const SVG = useRef()
-  const moodRef = useRef()
-
-  const GATEWAY = `https://ipfs.io/ipfs/`
-  const CID = `bafybeihqjtxnlkqwykthnj7idx6ytivmyttjcm4ckuljlkkauh6nm3lzve`
-  const BASE_URL = `./dracos-nfts/` //`https://aratta.dev/dracos-nfts/` //`${GATEWAY}${CID}/` // `http://localhost/luxgenerator/src/assets/pepito-pfp/` //`http://localhost/luxgenerator/src/assets/pepito-pfp/` //`${GATEWAY}${CID}/` // Or
 
   const download = (url) => {
     //const htmlStr = SVG.current.outerHTML
@@ -187,85 +94,112 @@ function Deposit() {
     }
   }
 
-  const getTotalSupply = async () => await contractReadonly.methods.totalSupply().call()
+  const getReward = async (addr) => await contractReadonly.methods.rewards(addr).call()
   const getMintPrice = async () => await contractReadonly.methods.mintPrice().call()
   const getSwipePrice = async () => await contractReadonly.methods.swipePrice().call()
   const getWhitelist = async (addr) => await contractReadonly.methods.getWhitelist(addr).call()
   const getSwipePool = async (tokenId) => await contractReadonly.methods.swipePool(tokenId).call()
   const getTokenIdsOf = async (addr) => await contractReadonly.methods.tokenIdsOf(addr).call()
 
-  const mintPigMood = async (e) => {
+  const deposit = async (e) => {
+  //  e.target.disabled = true
+    const web3 = new Web3(auth.provider)
+    const contract = new web3.eth.Contract(ABI, import.meta.env.VITE_CONTRACT)
+    const lsp7Contract = new web3.eth.Contract(ABILSP7, rewardTokenAddress)
+
+    const approveToast = toast.loading(`Waiting for approving`)
+
+    const lsp7 = await get_lsp7(rewardTokenAddress)
+
+    const totalAmountWei = lsp7.data.Asset[0].decimals === 0 ? totalAmount : web3.utils.toWei(totalAmount, `ether`)
+    const rewardAmountWei = lsp7.data.Asset[0].decimals === 0 ? totalAmount : web3.utils.toWei(rewardAmount, `ether`)
+
+    try {
+      lsp7Contract.methods
+        .authorizeOperator(import.meta.env.VITE_CONTRACT, totalAmountWei, '0x')
+        .send({ from: auth.accounts[0] })
+        .then((res) => {
+          toast.dismiss(approveToast)
+
+          const t = toast.loading(`Waiting for transaction's confirmation`)
+          contract.methods
+            .giveReward(rewardTokenAddress, totalAmountWei, rewardAmountWei, claimInterval)
+            .send({
+              from: auth.accounts[0],
+              value: 0,
+            })
+            .then((res) => {
+              console.log(res)
+              toast.success(`Done`)
+              toast.dismiss(t)
+              e.target.disabled = false
+              window.location.reload()
+            })
+            .catch((error) => {
+              console.log(error)
+              toast.dismiss(t)
+            })
+        })
+    } catch (error) {
+      console.log(error)
+      toast.dismiss(approveToast)
+    }
+  }
+
+  const stopWithdraw = async (e) => {
+    e.target.disabled = true
+    const web3 = new Web3(auth.provider)
+    const contract = new web3.eth.Contract(ABI, import.meta.env.VITE_CONTRACT)
+    const lsp7Contract = new web3.eth.Contract(ABILSP7, rewardTokenAddress)
+
+    const t = toast.loading(`Waiting for transaction's confirmation`)
+    try {
+      contract.methods
+        .transferLSP7('0x')
+        .send({
+          from: auth.accounts[0],
+          value: 0,
+        })
+        .then((res) => {
+          console.log(res)
+          toast.success(`Done`)
+          toast.dismiss(t)
+          e.target.disabled = false
+          window.location.reload()
+        })
+        .catch((error) => {
+          console.log(error)
+          toast.dismiss(t)
+        })
+    } catch (error) {
+      console.log(error)
+      toast.dismiss(t)
+    }
+  }
+
+  const pause = async (e) => {
     e.target.disabled = true
     const web3 = new Web3(auth.provider)
     const contract = new web3.eth.Contract(ABI, import.meta.env.VITE_CONTRACT)
 
-    const t = toast.loading(`Waiting for transaction's confirmation`)
-    //dddd, MMMM Do YYYY , h:mm:ss a
-    const metadata = JSON.stringify({
-      LSP4Metadata: {
-        name: 'Pigmint',
-        description: `Pigmint is a lightweight, mood-of-the-day mini-app built on the LUKSO blockchain.`,
-        links: [{ title: 'Clone', url: 'https://universaleverything.io/0xA2B4eC00e9c55fB7DBbaFCcE6Bc79777C23ca467' }],
-        attributes: [
-          { key: 'Mood', value: activeMood },
-          { key: 'Note', value: note },
-          { key: 'At', value: `🕑 ${moment().utc().format('MM/DD/YYYY')}` },
-        ],
-        icon: [
-          {
-            width: 512,
-            height: 512,
-            url: 'ipfs://bafybeiaziuramvgnceele5wetw5tt65bgp2z63faax7ihvrjd4wlvfsooq',
-            verification: {
-              method: 'keccak256(bytes)',
-              data: '0xe99121bbedf99dcf763f1a216ca8cd5847bce15e6930df1e92913c56367f92d1',
-            },
-          },
-        ],
-        backgroundImage: [],
-        assets: [],
-        images: [mood.filter((item) => item.name.toLowerCase() === activeMood.toLowerCase())[0].images],
-      },
-    })
-
     try {
-      if (token) {
-        // User own a token
-        console.log(`Update`)
-        contract.methods
-          .updatePigMood(token.tokenId[0], metadata, activeMood)
-          .send({
-            from: auth.accounts[0],
-            value: 0,
-          })
-          .then((res) => {
-            console.log(res)
-            toast.success(`Done`)
-            toast.dismiss(t)
-            e.target.disabled = false
-          })
-          .catch((error) => {
-            console.log(error)
-            toast.dismiss(t)
-          })
-      } else {
-        contract.methods
-          .mintPigMood(metadata)
-          .send({
-            from: auth.accounts[0],
-            value: 0,
-          })
-          .then((res) => {
-            console.log(res)
-            toast.success(`Done`)
-            toast.dismiss(t)
-            e.target.disabled = false
-          })
-          .catch((error) => {
-            console.log(error)
-            toast.dismiss(t)
-          })
-      }
+      const t = toast.loading(`Waiting for transaction's confirmation`)
+      contract.methods
+        .setClaimingStatus(!reward.isClaimingEnabled)
+        .send({
+          from: auth.accounts[0],
+          value: 0,
+        })
+        .then((res) => {
+          console.log(res)
+          toast.success(`Done`)
+          toast.dismiss(t)
+          e.target.disabled = false
+        })
+        .catch((error) => {
+          console.log(error)
+          toast.dismiss(t)
+        })
     } catch (error) {
       console.log(error)
       toast.dismiss(t)
@@ -334,13 +268,134 @@ function Deposit() {
     link.remove()
   }
 
+  async function get_lsp7(contract) {
+    console.log(contract)
+    let myHeaders = new Headers()
+    myHeaders.append('Content-Type', `application/json`)
+    myHeaders.append('Accept', `application/json`)
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify({
+        query: `query MyQuery {
+  Asset(where: {id: {_eq: "${contract}"}}) {
+    id
+    isLSP7
+    lsp4TokenName
+    lsp4TokenSymbol
+    lsp4TokenType
+    name
+    decimals
+    totalSupply
+    owner_id
+    icons {
+      id
+      src
+      url
+    }
+    transfers(order_by: {blockNumber: desc}, limit: 5) {
+      value
+      transaction_id
+      from {
+        id
+        fullName
+        profileImages {
+          src
+        }
+        isEOA
+      }
+      to {
+        id
+        fullName
+        profileImages {
+          src
+        }
+        isEOA
+      }
+    }
+    holders(order_by: {balance: desc}, limit: 100) {
+      balance
+      profile {
+        name
+        fullName
+        id
+        isEOA
+        isContract
+        profileImages {
+          src
+        }
+        tags
+      }
+    }
+  }
+}`,
+      }),
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_PUBLIC_API_ENDPOINT}`, requestOptions)
+    if (!response.ok) {
+      return { result: false, message: `Failed to fetch query` }
+    }
+    const data = await response.json()
+    return data
+  }
+
+  async function searchLSP7(e) {
+    const q = e.target.value
+
+    setStatus(`searching`)
+
+    let myHeaders = new Headers()
+    myHeaders.append('Content-Type', `application/json`)
+    myHeaders.append('Accept', `application/json`)
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify({
+        query: `query MyQuery {
+  Asset(
+    where: {lsp4TokenName: {_ilike: "%${q}%"}, isLSP7: {_eq: true}}
+    limit: 15
+    order_by: {holders_aggregate: {count: desc}}
+  ) {
+    id
+    isLSP7
+    lsp4TokenName
+    lsp4TokenSymbol
+    decimals
+    lsp4TokenType
+    name
+    totalSupply
+    owner_id
+    holders_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}`,
+      }),
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_PUBLIC_API_ENDPOINT}`, requestOptions)
+    if (!response.ok) {
+      return { result: false, message: `Failed to fetch query` }
+    }
+    const data = await response.json()
+    setStatus(``)
+    console.log(data)
+    if (data.data.Asset.length > 0) setLsp7list(data.data.Asset)
+  }
+
   useEffect(() => {
     console.clear()
 
-    // getMaxSupply().then((res) => {
-    //   console.log(res)
-    //   setMaxSupply(_.toNumber(res))
-    // })
+    getReward(auth.contextAccounts[0]).then((res) => {
+      console.log(res)
+      setReward(res)
+    })
 
     auth.accounts[0] === auth.contextAccounts[0] ? setUserType(`owner`) : setUserType(`visitor`)
   }, [])
@@ -351,21 +406,75 @@ function Deposit() {
         <Toaster />
 
         <main className={`${styles.main}`}>
-          <div className={`__container`} data-width={`small`}>
+          <div className={`__container`} data-width={`medium`}>
+            {reward && (
+              <ul className={`d-flex flex-column mb-20`}>
+                <li>
+                  <span>Reward Token Address: </span>
+                  <a href={`https://universaleverything.io/asset/${reward.rewardTokenAddress}`} target={`_blank`}>
+                    {reward.rewardTokenAddress}
+                  </a>
+                </li>
+                <li>
+                  <span>Total amount: </span>
+                  <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.totalAmount), `ether`))}</b>
+                </li>
+                <li>
+                  <span>Reward Amount: </span>
+                  <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`))}</b>
+                </li>
+                <li>
+                  <span>Remainder Amount: </span>
+                  <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`))}</b>
+                </li>
+                <li>
+                  <span>Claiming Stauts: </span>
+                  {reward.isClaimingEnabled ? <span className={`badge badge-pill badge-success`}>Active</span> : <span className={`badge badge-pill badge-danger`}>Paused</span>}
+                </li>
+              </ul>
+            )}
 
+            <div className={`form d-flex flex-column grid--gap-050 mb-30`}>
+              <div className={`form-group`}>
+                <input list={`tokens`} type={`text`} placeholder={`Search Reward Token Address`} onChange={(e) => setRewardTokenAddress(e.target.value)} onKeyDown={(e) => searchLSP7(e)} />
 
-            
-            <div className={`d-flex flex-column grid--gap-050 mb-30`}>
-              <input type={`text`} placeholder={`Token`} />
-              <input type={`text`} placeholder={`Amount`} />
-              <input type={`text`} placeholder={`Amount per claim`} />
-              <small>Each wallet is eligible to make a claim every 24 hours.</small>
+                <datalist id="tokens">
+                  {lsp7list.length > 0 &&
+                    lsp7list.map((item, i) => {
+                      return (
+                        <option key={i} value={`${item.id}`}>
+                          {item.lsp4TokenName} (${item.lsp4TokenSymbol})
+                        </option>
+                      )
+                    })}
+                </datalist>
+              </div>
+              <div className={`form-group`}>
+                <input type={`text`} placeholder={`Total Amount`} onChange={(e) => setTotalAmount(e.target.value)} />
+              </div>
+
+              <div className={`form-group`}>
+                <input type={`text`} placeholder={`Reward Amount`} onChange={(e) => setRewardAmount(e.target.value)} />
+              </div>
+
+              <div className={`form-group`}>
+                <input type={`text`} placeholder={`Claim Interval`} list="interval" onChange={(e) => setClaimInterval(e.target.value)} />
+                <small>This is the time that a visitor has to wait between claiming rewards (based on hours)</small>
+                <datalist id={`interval`}>
+                  <option value="24" />
+                  <option value="48" />
+                  <option value="72" />
+                </datalist>
+              </div>
             </div>
 
             {auth.walletConnected && (
               <div className={`${styles.action} d-f-c flex-column w-100`}>
-                <button onClick={(e) => mintPigMood(e)}>Deposit</button>
-                <button onClick={(e) => navigate(`deposit`)}>Withdraw</button>
+                <button onClick={(e) => deposit(e)} disabled={rewardTokenAddress === undefined || totalAmount === undefined || rewardAmount === undefined || claimInterval === undefined}>
+                  Approve & Deposit
+                </button>
+                <button onClick={(e) => stopWithdraw(e)}>Stop & Withdraw</button>
+                <button onClick={(e) => pause(e)}>Pause</button>
                 <button onClick={(e) => navigate(`../`)}>Back</button>
               </div>
             )}

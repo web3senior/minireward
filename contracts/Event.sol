@@ -15,9 +15,9 @@ event RewardGiven(address indexed sender, address indexed rewardTokenAddress, ui
 * @notice Emitted when a visitor claims a reward.
 * @param visitor The address of the visitor.
 * @param from The address of profile/ host.
-* @param amount The amount of tokens/LYX claimed.
+* @param remainderAmount The remainder amount of tokens/LYX claimed.
 */
-event RewardClaimed(address indexed visitor, address indexed from, uint256 indexed amount);
+event RewardClaimed(address indexed visitor, address indexed from, address indexed rewardTokenAddress, uint256 remainderAmount);
 
 /**
 * @notice Emitted when the claiming status is changed.
@@ -25,3 +25,11 @@ event RewardClaimed(address indexed visitor, address indexed from, uint256 index
 * @param enabled The new claiming status.
 */
 event ClaimingStatusChanged(address profileOwner, bool enabled);
+
+/**
+* @notice Emitted when the claiming status is changed.
+* @param sender The owner of profile/ sender.
+* @param rewardTokenAddress The reward token address.
+* @param remainderAmount The remainder amount of reward token address.
+*/
+event Withdrawn(address sender, address rewardTokenAddress, uint remainderAmount);

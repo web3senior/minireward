@@ -99,8 +99,14 @@
 					},
 					{
 						"indexed": true,
+						"internalType": "address",
+						"name": "rewardTokenAddress",
+						"type": "address"
+					},
+					{
+						"indexed": false,
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "remainderAmount",
 						"type": "uint256"
 					}
 				],
@@ -158,6 +164,31 @@
 				"type": "event"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "rewardTokenAddress",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "remainderAmount",
+						"type": "uint256"
+					}
+				],
+				"name": "Withdrawn",
+				"type": "event"
+			},
+			{
 				"inputs": [],
 				"name": "VERSION",
 				"outputs": [
@@ -176,11 +207,6 @@
 						"internalType": "address",
 						"name": "from",
 						"type": "address"
-					},
-					{
-						"internalType": "bool",
-						"name": "force",
-						"type": "bool"
 					},
 					{
 						"internalType": "bytes",
@@ -325,6 +351,11 @@
 					},
 					{
 						"internalType": "uint256",
+						"name": "remainderAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "rewardAmount",
 						"type": "uint256"
 					},
@@ -369,6 +400,19 @@
 					}
 				],
 				"name": "transferBalance",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"name": "transferLSP7",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -428,10 +472,10 @@
 				"Paused(address)": {
 					"details": "Emitted when the pause is triggered by `account`."
 				},
-				"RewardClaimed(address,address,uint256)": {
+				"RewardClaimed(address,address,address,uint256)": {
 					"params": {
-						"amount": "The amount of tokens/LYX claimed.",
 						"from": "The address of profile/ host.",
+						"remainderAmount": "The remainder amount of tokens/LYX claimed.",
 						"visitor": "The address of the visitor."
 					}
 				},
@@ -446,6 +490,13 @@
 				},
 				"Unpaused(address)": {
 					"details": "Emitted when the pause is lifted by `account`."
+				},
+				"Withdrawn(address,address,uint256)": {
+					"params": {
+						"remainderAmount": "The remainder amount of reward token address.",
+						"rewardTokenAddress": "The reward token address.",
+						"sender": "The owner of profile/ sender."
+					}
 				}
 			},
 			"kind": "dev",
@@ -471,11 +522,14 @@
 				"ClaimingStatusChanged(address,bool)": {
 					"notice": "Emitted when the claiming status is changed."
 				},
-				"RewardClaimed(address,address,uint256)": {
+				"RewardClaimed(address,address,address,uint256)": {
 					"notice": "Emitted when a visitor claims a reward."
 				},
 				"RewardGiven(address,address,uint256,uint256,uint256)": {
 					"notice": "Emitted when a profile add/ update reward."
+				},
+				"Withdrawn(address,address,uint256)": {
+					"notice": "Emitted when the claiming status is changed."
 				}
 			},
 			"kind": "user",
@@ -549,19 +603,19 @@
 			]
 		},
 		"Event.sol": {
-			"keccak256": "0x47c1b5129854275e4e103876ebe690308d3ffe41e6ccc3e99682e839e0605ba3",
+			"keccak256": "0x71a94c7333ac5e5d3f88c78e5251f1a9e9ac475343b1e262e932f4978cd3a9de",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f0569724edbf2f95729b869f264ad05d5ebfc7b20bc0ead1057c7540d4955aa5",
-				"dweb:/ipfs/QmV5wkjXc91YC6T4e7h7zCXgUSTGZ6tL6McDUjGAYw2JNH"
+				"bzz-raw://5e468a7647251f4cc2ae60ae091bb92fdb17cbdc8936ea70255eaf6dd774da99",
+				"dweb:/ipfs/QmeW2UeM5fcGhqUSTnmUGd8RVyYPuy9P436nw6KJ1XZpGT"
 			]
 		},
 		"MiniReward.sol": {
-			"keccak256": "0xf177b400805ec75fef6410dcada7506c9327e60160b06367db824080fa450ba3",
+			"keccak256": "0x0d87b072527d7b658ea93a23225692854c968610b22814d42917e996df4fa847",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://13abf84692e278322e4efd094e042c46438aab04e0758ff81bf6705e3f5dfea3",
-				"dweb:/ipfs/QmXPLwbNRqXnzHu4Wu1GaKxsgEQVNwKyH9aFPNTyj8B4Gw"
+				"bzz-raw://e8ff12bdbb6f50ec4e3bfb77298061b24e55cffccb30341eb247c024df2031dd",
+				"dweb:/ipfs/QmXTyRTjg95wwXaD4fuEzQcjqwzuL3edQhui6X9CoySufY"
 			]
 		}
 	},

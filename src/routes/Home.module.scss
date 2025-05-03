@@ -20,6 +20,12 @@
   justify-content: center;
   width: 100%;
   row-gap: 1.5rem;
+
+  button {
+    &:disabled {
+      opacity: .4;
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -49,7 +55,11 @@ figure.pfp {
     font-size: 2.5vw;
   }
 }
-
+.connectWallet {
+  position: fixed;
+  left: 2rem;
+  top: .8rem;
+}
 .main {
   color: var(--white, #fff);
 
@@ -85,7 +95,10 @@ figure.pfp {
     text-align: center;
   }
 
+
+
   .progressbar {
+    position: relative;
     border: 1px solid red;
     margin: 2rem 0;
     border-radius: 999px;
@@ -96,11 +109,19 @@ figure.pfp {
     border: 2px solid rgba(71, 59, 30, 0.4);
     background-color: #202832;
 
+    span {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
     div {
       display: block;
+      height: 29px;
 
       &:first-child {
-        width: 230px;
+        width: var(--w);
         background: linear-gradient(270deg, #ffff42 0.19%, #fda709 50.09%, #875a1e 100%);
         border-radius: 999px;
       }

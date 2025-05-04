@@ -28,6 +28,12 @@
   }
 }
 
+.aratta {
+  position: fixed;
+  left: 1.5rem;
+  bottom: .5rem;
+}
+
 @media (prefers-color-scheme: dark) {
   // .page {
   //   --gray-rgb: 255, 255, 255;

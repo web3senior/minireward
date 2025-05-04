@@ -16,7 +16,7 @@ import "./Error.sol";
 /// @custom:emoji 💵
 /// @custom:security-contact atenyun@gmail.com
 contract MiniReward is Ownable, Pausable, ReentrancyGuard {
-    string public constant VERSION = "1.0.0";
+    string public constant VERSION = "2.0.0";
     string failedMessage = "Failed to send Ether!";
     uint8 public fee;
     LSP26FollowerSystem public immutable followerSystem;
@@ -43,7 +43,6 @@ contract MiniReward is Ownable, Pausable, ReentrancyGuard {
     }
 
     function updateFee(uint8 _fee) public onlyOwner {
-        assert(fee < 100);
         fee = _fee;
         emit FeeUpdated(_fee);
     }

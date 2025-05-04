@@ -703,11 +703,11 @@
 			]
 		},
 		"MiniReward.sol": {
-			"keccak256": "0xc4b7b230d69b0999accd4a03337165b829c2d324307959e50f984072f8233c69",
+			"keccak256": "0x20fb251dccd5130eee99dd5a26426b0cf81a7715fc796faef79f8fbdae5335d6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://ff03ad7bc26c35af9fca33b7164888798f35cdd1d6855535b1348bbd03ef951a",
-				"dweb:/ipfs/QmScWacj1qdvkUTqrz75u1VcF6MPNhDcrmaEXTMyZFfmSY"
+				"bzz-raw://a7aed4d0a3d83754a4e70027760f55911469336e89021936aa5682cf75905504",
+				"dweb:/ipfs/QmRRqrcnkUH7Pc8FDshFMzPxf8doJV9AJBmMtT28UKd76j"
 			]
 		}
 	},

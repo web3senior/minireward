@@ -241,7 +241,7 @@ function Home() {
             <small className={`mt-10`}>In order to claim, you need to follow the profile first!</small>
           </div>
 
-          <figure className={`d-f-c mt-20`}>
+          <figure className={`d-f-c mt-20 ${styles.aratta}`}>
             <img src={Aratta} />
           </figure>
         </main>

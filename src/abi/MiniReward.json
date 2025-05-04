@@ -1,6 +1,12 @@
 [
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_followerSystemAddress",
+				"type": "address"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -239,6 +245,19 @@
 				"internalType": "uint8",
 				"name": "",
 				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "followerSystem",
+		"outputs": [
+			{
+				"internalType": "contract ILSP26FollowerSystem",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",

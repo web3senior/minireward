@@ -84,7 +84,7 @@ function Home() {
       contract.methods
         .claimReward(auth.contextAccounts[0], '0x')
         .send({
-          from: auth.accounts[0]
+          from: auth.accounts[0],
         })
         .then((res) => {
           console.log(res)
@@ -205,7 +205,8 @@ function Home() {
             {reward && (
               <>
                 <h2>
-                  ⚡ {_.toNumber(reward.claimInterval) / 60 / 60}h / {new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`))} {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
+                  ⚡ {_.toNumber(reward.claimInterval) / 60 / 60}h / {new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`))}{' '}
+                  {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
                 </h2>
                 {/* _.toNumber(reward.claimInterval) */}
                 {auth.walletConnected && <NextClaim />}
@@ -214,12 +215,11 @@ function Home() {
 
             {reward && tokenDetails && (
               <div className={`${styles.progressbar}`}>
-                <div style={{ '--w': `${ web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`)* 100 / web3Readonly.utils.fromWei(_.toNumber(reward.totalAmount), `ether`) }%` }}>
-                <span>
-                  {new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`))} {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
-                </span>
+                <div style={{ '--w': `${(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`) * 100) / web3Readonly.utils.fromWei(_.toNumber(reward.totalAmount), `ether`)}%` }}>
+                  <span>
+                    {new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`))} {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
+                  </span>
                 </div>
-          
               </div>
             )}
 
@@ -238,7 +238,7 @@ function Home() {
               )}
             </div>
 
-            
+            <small className={`mt-10`}>In order to claim, you need to follow the profile first!</small>
           </div>
 
           <figure className={`d-f-c mt-20`}>
@@ -338,7 +338,7 @@ const Profile = ({ addr }) => {
       <figure className={`${styles.pfp} d-f-c flex-column grid--gap-050`}>
         <img
           alt={data.data.search_profiles[0].fullName}
-          src={`${data.data.search_profiles[0].profileImages.length > 0 ? data.data.search_profiles[0].profileImages[0].src : 'https://ipfs.io/ipfs/bafkreihdpxu5e77tfkekpq24wtu4pplhdw3ssdvuwatexs42hyxeh3enei'}`}
+          src={`${data.data.search_profiles[0].profileImages.length > 0 ? data.data.search_profiles[0].profileImages[0].src : 'https://ipfs.io/ipfs/bafkreiatl2iuudjiq354ic567bxd7jzhrixf5fh5e6x6uhdvl7xfrwxwzm'}`}
           className={`rounded`}
         />
         <figcaption>@{data.data.search_profiles[0].name}</figcaption>

@@ -23,7 +23,7 @@
 
   button {
     &:disabled {
-      opacity: .4;
+      opacity: 0.4;
     }
   }
 }
@@ -58,7 +58,7 @@ figure.pfp {
 .connectWallet {
   position: fixed;
   left: 2rem;
-  top: .8rem;
+  top: 0.8rem;
 }
 .main {
   color: var(--white, #fff);
@@ -95,8 +95,6 @@ figure.pfp {
     text-align: center;
   }
 
-
-
   .progressbar {
     position: relative;
     border: 1px solid red;
@@ -110,13 +108,19 @@ figure.pfp {
     background-color: #202832;
 
     span {
+      --shadow-color: white;
+      color: var(--white);
+      font-size: 13px;
+      border-radius: 999px;
       position: absolute;
-      left: 50%;
+      left: max(50%, 2rem);
       top: 50%;
       transform: translate(-50%, -50%);
+      text-wrap: nowrap;
     }
 
     div {
+      position: relative;
       display: block;
       height: 29px;
 

@@ -1,5 +1,5 @@
 {
-	"id": "93a828e2a4df14ab518d3d68c7f66df9",
+	"id": "9ea2edfa95a386628c7d841ae4ac70f6",
 	"_format": "hh-sol-build-info-1",
 	"solcVersion": "0.8.29",
 	"solcLongVersion": "0.8.29+commit.ab55807c",
@@ -7,7 +7,7 @@
 		"language": "Solidity",
 		"sources": {
 			"Event.sol": {
-				"content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\n/**\r\n* @notice Emitted when a profile add/ update reward.\r\n* @param sender The address of the visitor.\r\n* @param rewardTokenAddress The reward token.\r\n* @param totalAmount The amount of tokens/LYX.\r\n* @param rewardAmount The amount of tokens/LYX to reward visitors.\r\n* @param claimInterval The interval between claims.\r\n*/\r\nevent RewardGiven(address indexed sender, address indexed rewardTokenAddress, uint256 totalAmount, uint256 rewardAmount, uint256 claimInterval);\r\n\r\n/**\r\n* @notice Emitted when a visitor claims a reward.\r\n* @param visitor The address of the visitor.\r\n* @param from The address of profile/ host.\r\n* @param remainderAmount The remainder amount of tokens/LYX claimed.\r\n*/\r\nevent RewardClaimed(address indexed visitor, address indexed from, address indexed rewardTokenAddress, uint256 remainderAmount);\r\n\r\n/**\r\n* @notice Emitted when the claiming status is changed.\r\n* @param profileOwner The owner of profile/ sender.\r\n* @param enabled The new claiming status.\r\n*/\r\nevent ClaimingStatusChanged(address profileOwner, bool enabled);\r\n\r\n/**\r\n* @notice Emitted when the claiming status is changed.\r\n* @param sender The owner of profile/ sender.\r\n* @param rewardTokenAddress The reward token address.\r\n* @param remainderAmount The remainder amount of reward token address.\r\n*/\r\nevent Withdrawn(address sender, address rewardTokenAddress, uint remainderAmount);\r\n"
+				"content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\n/**\r\n* @notice Emitted when a profile add/ update reward.\r\n* @param sender The address of the visitor.\r\n* @param rewardTokenAddress The reward token.\r\n* @param totalAmount The amount of tokens/LYX.\r\n* @param rewardAmount The amount of tokens/LYX to reward visitors.\r\n* @param claimInterval The interval between claims.\r\n*/\r\nevent RewardGiven(address indexed sender, address indexed rewardTokenAddress, uint256 totalAmount, uint256 rewardAmount, uint256 claimInterval);\r\n\r\n/**\r\n* @notice Emitted when a visitor claims a reward.\r\n* @param visitor The address of the visitor.\r\n* @param from The address of profile/ host.\r\n* @param remainderAmount The remainder amount of tokens/LYX claimed.\r\n*/\r\nevent RewardClaimed(address indexed visitor, address indexed from, address indexed rewardTokenAddress, uint256 remainderAmount);\r\n\r\n/**\r\n* @notice Emitted when the claiming status is changed.\r\n* @param profileOwner The owner of profile/ sender.\r\n* @param enabled The new claiming status.\r\n*/\r\nevent ClaimingStatusChanged(address profileOwner, bool enabled);\r\n\r\n/**\r\n* @notice Emitted when the claiming status is changed.\r\n* @param sender The owner of profile/ sender.\r\n* @param rewardTokenAddress The reward token address.\r\n* @param remainderAmount The remainder amount of reward token address.\r\n*/\r\nevent Withdrawn(address sender, address rewardTokenAddress, uint256 remainderAmount);\r\n\r\nevent FeeUpdated(uint256);"
 			}
 		},
 		"settings": {
@@ -47,6 +47,9 @@
 						"ClaimingStatusChanged": [
 							32
 						],
+						"FeeUpdated": [
+							45
+						],
 						"RewardClaimed": [
 							25
 						],
@@ -57,7 +60,7 @@
 							41
 						]
 					},
-					"id": 42,
+					"id": 46,
 					"license": "MIT",
 					"nodeType": "SourceUnit",
 					"nodes": [
@@ -533,10 +536,10 @@
 										"indexed": false,
 										"mutability": "mutable",
 										"name": "remainderAmount",
-										"nameLocation": "1419:15:0",
+										"nameLocation": "1422:15:0",
 										"nodeType": "VariableDeclaration",
 										"scope": 41,
-										"src": "1414:20:0",
+										"src": "1414:23:0",
 										"stateVariable": false,
 										"storageLocation": "default",
 										"typeDescriptions": {
@@ -545,9 +548,9 @@
 										},
 										"typeName": {
 											"id": 38,
-											"name": "uint",
+											"name": "uint256",
 											"nodeType": "ElementaryTypeName",
-											"src": "1414:4:0",
+											"src": "1414:7:0",
 											"typeDescriptions": {
 												"typeIdentifier": "t_uint256",
 												"typeString": "uint256"
@@ -556,12 +559,56 @@
 										"visibility": "internal"
 									}
 								],
-								"src": "1369:66:0"
+								"src": "1369:69:0"
 							},
-							"src": "1354:82:0"
+							"src": "1354:85:0"
+						},
+						{
+							"anonymous": false,
+							"eventSelector": "8c4d35e54a3f2ef1134138fd8ea3daee6a3c89e10d2665996babdf70261e2c76",
+							"id": 45,
+							"name": "FeeUpdated",
+							"nameLocation": "1449:10:0",
+							"nodeType": "EventDefinition",
+							"parameters": {
+								"id": 44,
+								"nodeType": "ParameterList",
+								"parameters": [
+									{
+										"constant": false,
+										"id": 43,
+										"indexed": false,
+										"mutability": "mutable",
+										"name": "",
+										"nameLocation": "-1:-1:-1",
+										"nodeType": "VariableDeclaration",
+										"scope": 45,
+										"src": "1460:7:0",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 42,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "1460:7:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									}
+								],
+								"src": "1459:9:0"
+							},
+							"src": "1443:26:0"
 						}
 					],
-					"src": "33:1405:0"
+					"src": "33:1436:0"
 				},
 				"id": 0
 			}

@@ -26,6 +26,11 @@
 		"type": "error"
 	},
 	{
+		"inputs": [],
+		"name": "ReentrancyGuardReentrantCall",
+		"type": "error"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -42,6 +47,19 @@
 			}
 		],
 		"name": "ClaimingStatusChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "FeeUpdated",
 		"type": "event"
 	},
 	{
@@ -93,6 +111,12 @@
 			},
 			{
 				"indexed": true,
+				"internalType": "address",
+				"name": "rewardTokenAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint256",
 				"name": "remainderAmount",
 				"type": "uint256"
@@ -209,6 +233,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "fee",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getBalance",
 		"outputs": [
 			{
@@ -245,7 +282,7 @@
 		],
 		"name": "giveReward",
 		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -421,6 +458,19 @@
 	{
 		"inputs": [],
 		"name": "unpause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "_fee",
+				"type": "uint8"
+			}
+		],
+		"name": "updateFee",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

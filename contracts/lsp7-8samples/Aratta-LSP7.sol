@@ -1,22 +1,26 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.29;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@lukso/lsp-smart-contracts/contracts/LSP7DigitalAsset/presets/LSP7Mintable.sol";
-import {_LSP4_TOKEN_TYPE_TOKEN} from "@lukso/lsp4-contracts/contracts/LSP4Constants.sol";
-import "./_error.sol";
+import "@lukso/lsp-smart-contracts/contracts/LSP7DigitalAsset/extensions/LSP7Burnable.sol";
 
-/// @title Fish
-/// @author Aratta Labs
-/// @notice Aratta Labs token/ LSP7
-/// @dev Deployed contract addresses are available in the project repository.
-/// @custom:emoji 🎯
+/// @title LSP7
+/// @author Aratta Labs(PumpRoom)
+/// @notice LSP7
+/// @dev You will find the deployed contract addresses on the repo
+/// @custom:emoji 🤖
 /// @custom:security-contact atenyun@gmail.com
-contract ARATTA is LSP7Mintable {
-    uint256 public constant tokenSupplyCap = 500_000_000 ether;
+contract LSP7 is LSP7Mintable, LSP7Burnable {
+    uint256 public tokenSupplyCap;
+    error SupplyLimitExceeded(uint256 totalSupply, uint256 tokenSupplyCap);
 
-    constructor() LSP7Mintable("ARATTA", "ARATTA", msg.sender, _LSP4_TOKEN_TYPE_TOKEN, false) {
-        mint(msg.sender, 420_000_000 * 10**decimals(), true, "");
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint256 _tokenSupplyCap
+    ) LSP7Mintable(_name, _symbol, msg.sender, 0, false) {
+        tokenSupplyCap =_tokenSupplyCap * 10**decimals();
+        mint(msg.sender, _tokenSupplyCap * 10**decimals(), true, "");
     }
 
     function _mint(

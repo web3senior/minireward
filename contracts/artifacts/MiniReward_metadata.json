@@ -6,7 +6,13 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_followerSystemAddress",
+						"type": "address"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
 			},
@@ -32,6 +38,11 @@
 				"type": "error"
 			},
 			{
+				"inputs": [],
+				"name": "ReentrancyGuardReentrantCall",
+				"type": "error"
+			},
+			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -48,6 +59,19 @@
 					}
 				],
 				"name": "ClaimingStatusChanged",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "FeeUpdated",
 				"type": "event"
 			},
 			{
@@ -221,6 +245,32 @@
 			},
 			{
 				"inputs": [],
+				"name": "fee",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "followerSystem",
+				"outputs": [
+					{
+						"internalType": "contract ILSP26FollowerSystem",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "getBalance",
 				"outputs": [
 					{
@@ -257,7 +307,7 @@
 				],
 				"name": "giveReward",
 				"outputs": [],
-				"stateMutability": "nonpayable",
+				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
@@ -438,6 +488,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "_fee",
+						"type": "uint8"
+					}
+				],
+				"name": "updateFee",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "withdraw",
 				"outputs": [],
@@ -459,6 +522,11 @@
 				"ExpectedPause()": [
 					{
 						"details": "The operation failed because the contract is not paused."
+					}
+				],
+				"ReentrancyGuardReentrantCall()": [
+					{
+						"details": "Unauthorized reentrant call."
 					}
 				]
 			},
@@ -554,12 +622,28 @@
 		"remappings": []
 	},
 	"sources": {
-		"@lukso/lsp7-contracts/contracts/ILSP7DigitalAsset.sol": {
-			"keccak256": "0xed4d99a44fa7f33938b35e46c181bb6ed90b6f9dd659af93670a406ececa64da",
+		"@erc725/smart-contracts/contracts/interfaces/IERC725Y.sol": {
+			"keccak256": "0xa47c9e3eba0c733a1685b9fa309f753540c89ad2dca73236a2c953e7f5680e7b",
+			"license": "CC0-1.0",
+			"urls": [
+				"bzz-raw://59076395f660838919a2068cb7792c0fa70533642bbc5b4e3cc3cbb2c9ec7b50",
+				"dweb:/ipfs/QmQqew3mDuyHCBdd4v1JiwRiKEbzk3LeHchzTHSdyhYg5b"
+			]
+		},
+		"@lukso/lsp26-contracts/contracts/ILSP26FollowerSystem.sol": {
+			"keccak256": "0xd71c80510552ecdcd3712ab1c9410d370ae28638c6c6a8017fed47520613b502",
 			"license": "Apache-2.0",
 			"urls": [
-				"bzz-raw://6431975ac7b6951c1d6f9c27352b113074faf10319499d51bafc4f38d3cb31a7",
-				"dweb:/ipfs/Qmd7MForQ2P1T3jZp4CbdCEPoPg7HfgwtkNAg34EahqWwn"
+				"bzz-raw://d59ed8946be1ed2016a3867df5236feb6a5d1ef4eae2a96ca2c769cff8c7ebf0",
+				"dweb:/ipfs/QmRWaEwayQB2v91XsinHKMmbQQNBcwwvLaBJ8ypsJhG5q9"
+			]
+		},
+		"@lukso/lsp7-contracts/contracts/ILSP7DigitalAsset.sol": {
+			"keccak256": "0xe809a376f430ba79bf7554b3274617103f1d0434546b2d4fe68019e3079a53d0",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://f955f4d89c5a99f791af4a3fc7201ba0299627fca221d97a66a562eeb4860c04",
+				"dweb:/ipfs/QmcAqBHYFwk6VXevUeSjefFag6EhndrXQP1D4tGjxtgUMT"
 			]
 		},
 		"@openzeppelin/contracts/access/Ownable.sol": {
@@ -568,14 +652,6 @@
 			"urls": [
 				"bzz-raw://fc980984badf3984b6303b377711220e067722bbd6a135b24669ff5069ef9f32",
 				"dweb:/ipfs/QmPHXMSXj99XjSVM21YsY6aNtLLjLVXDbyN76J5HQYvvrz"
-			]
-		},
-		"@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-			"keccak256": "0xa535a5df777d44e945dd24aa43a11e44b024140fc340ad0dfe42acf4002aade1",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://41319e7f621f2dc3733511332c4fd032f8e32ad2aa7fd6f665c19741d9941a34",
-				"dweb:/ipfs/QmcYR3bd862GD1Bc7jwrU9bGxrhUu5na1oP964bDCu2id1"
 			]
 		},
 		"@openzeppelin/contracts/utils/Context.sol": {
@@ -594,6 +670,22 @@
 				"dweb:/ipfs/QmQKVzSQY1PM3Bid4QhgVVZyx6B4Jx7XgaQzLKHj38vJz8"
 			]
 		},
+		"@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+			"keccak256": "0x11a5a79827df29e915a12740caf62fe21ebe27c08c9ae3e09abe9ee3ba3866d3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3cf0c69ab827e3251db9ee6a50647d62c90ba580a4d7bbff21f2bea39e7b2f4a",
+				"dweb:/ipfs/QmZiKwtKU1SBX4RGfQtY7PZfiapbbu6SZ9vizGQD9UHjRA"
+			]
+		},
+		"@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f",
+				"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
+			]
+		},
 		"Error.sol": {
 			"keccak256": "0x1c0d92fb7a42ac841262d49310ed34ae31f679ce9d2a0d9c72e8f346c587a425",
 			"license": "MIT",
@@ -603,19 +695,19 @@
 			]
 		},
 		"Event.sol": {
-			"keccak256": "0x71a94c7333ac5e5d3f88c78e5251f1a9e9ac475343b1e262e932f4978cd3a9de",
+			"keccak256": "0x254c16449c3cc4368b481272500b452ebd541b30438fe585d3a11cf9bea24d1b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5e468a7647251f4cc2ae60ae091bb92fdb17cbdc8936ea70255eaf6dd774da99",
-				"dweb:/ipfs/QmeW2UeM5fcGhqUSTnmUGd8RVyYPuy9P436nw6KJ1XZpGT"
+				"bzz-raw://ed1257bc6ae157c7e196460f098956ac1841aedc13e0b3b73312bc46949b532a",
+				"dweb:/ipfs/QmdDAJDLMQUwUN8Ncs6KU5tFrFXEuPEPaV9JTmzaB29WKt"
 			]
 		},
 		"MiniReward.sol": {
-			"keccak256": "0x0d87b072527d7b658ea93a23225692854c968610b22814d42917e996df4fa847",
+			"keccak256": "0xc4b7b230d69b0999accd4a03337165b829c2d324307959e50f984072f8233c69",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e8ff12bdbb6f50ec4e3bfb77298061b24e55cffccb30341eb247c024df2031dd",
-				"dweb:/ipfs/QmXTyRTjg95wwXaD4fuEzQcjqwzuL3edQhui6X9CoySufY"
+				"bzz-raw://ff03ad7bc26c35af9fca33b7164888798f35cdd1d6855535b1348bbd03ef951a",
+				"dweb:/ipfs/QmScWacj1qdvkUTqrz75u1VcF6MPNhDcrmaEXTMyZFfmSY"
 			]
 		}
 	},

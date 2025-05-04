@@ -32,4 +32,6 @@ event ClaimingStatusChanged(address profileOwner, bool enabled);
 * @param rewardTokenAddress The reward token address.
 * @param remainderAmount The remainder amount of reward token address.
 */
-event Withdrawn(address sender, address rewardTokenAddress, uint remainderAmount);
+event Withdrawn(address sender, address rewardTokenAddress, uint256 remainderAmount);
+
+event FeeUpdated(uint256);

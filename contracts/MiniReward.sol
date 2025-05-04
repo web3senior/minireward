@@ -2,9 +2,10 @@
 pragma solidity ^0.8.29;
 
 import {ILSP7DigitalAsset as ILSP7} from "@lukso/lsp7-contracts/contracts/ILSP7DigitalAsset.sol";
+import {ILSP26FollowerSystem as LSP26FollowerSystem} from "@lukso/lsp26-contracts/contracts/ILSP26FollowerSystem.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./Event.sol";
 import "./Error.sol";
 
@@ -17,6 +18,8 @@ import "./Error.sol";
 contract MiniReward is Ownable, Pausable, ReentrancyGuard {
     string public constant VERSION = "1.0.0";
     string failedMessage = "Failed to send Ether!";
+    uint8 public fee;
+    LSP26FollowerSystem public immutable followerSystem;
 
     struct rewardPoolStruct {
         address rewardTokenAddress; // The address of the LSP7 token.
@@ -35,7 +38,15 @@ contract MiniReward is Ownable, Pausable, ReentrancyGuard {
     mapping(address => rewardPoolStruct) public rewards;
     mapping(address => mapping(address => ClaimedReward)) public hasClaimed;
 
-    constructor() {}
+    constructor(address _followerSystemAddress) {
+        followerSystem = LSP26FollowerSystem(_followerSystemAddress);
+    }
+
+    function updateFee(uint8 _fee) public onlyOwner {
+        assert(fee < 100);
+        fee = _fee;
+        emit FeeUpdated(_fee);
+    }
 
     function setClaimingStatus(bool _enabled) external {
         rewards[_msgSender()].isClaimingEnabled = _enabled;
@@ -47,11 +58,19 @@ contract MiniReward is Ownable, Pausable, ReentrancyGuard {
         uint256 _totalAmount,
         uint256 _rewardAmount,
         uint256 _interval
-    ) external whenNotPaused nonReentrant {
+    ) external payable whenNotPaused nonReentrant {
         require(_rewardTokenAddress != address(0), "Token address cannot be zero");
         require(_totalAmount > 0, "Total amount must be greater than zero");
         require(_rewardAmount > 0, "Reward amount must be greater than zero");
+        require(_rewardAmount <= _totalAmount, "Reward amount can't be greater than total amount");
         require(_interval > 0, "Claim interval must be greater than zero");
+
+        // Chk fee
+        if (fee > 0) {
+            if (msg.value < fee) revert InsufficientBalance(msg.value);
+            (bool success, ) = owner().call{value: msg.value}("");
+            require(success, failedMessage);
+        }
 
         // Send the old token to the owner(refresh the poll)
         if (rewards[_msgSender()].rewardAmount > 0) transferLSP7("");
@@ -70,11 +89,13 @@ contract MiniReward is Ownable, Pausable, ReentrancyGuard {
 
     function claimReward(address from, bytes memory data) public whenNotPaused nonReentrant {
         address rewardTokenAddress = rewards[from].rewardTokenAddress;
-        uint256 totalAmount = rewards[from].totalAmount;
         uint256 remainderAmount = rewards[from].remainderAmount;
         uint256 rewardAmount = rewards[from].rewardAmount;
         uint256 claimInterval = rewards[from].claimInterval;
         bool isClaimingEnabled = rewards[from].isClaimingEnabled;
+
+        // Chk if sender is following the profile
+        require(followerSystem.isFollowing(_msgSender(), from), "You aren't following the profile");
 
         require(isClaimingEnabled, "Claiming is currently disabled");
         require(remainderAmount >= rewardAmount, InsufficientBalance(remainderAmount)); // Check if reward amount is greater than total amount.

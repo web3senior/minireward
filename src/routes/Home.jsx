@@ -7,6 +7,7 @@ import ABI from '../abi/MiniReward.json'
 import Coin from './../assets/coin.svg'
 import DefaultPFP from './../assets/default-pfp.svg'
 import ConnectArrow from './../assets/connect-arrow.svg'
+import Aratta from './../assets/aratta.svg'
 
 import Default from './../assets/default.png'
 import moment from 'moment'
@@ -83,14 +84,26 @@ function Home() {
       contract.methods
         .claimReward(auth.contextAccounts[0], '0x')
         .send({
-          from: auth.accounts[0],
-          value: 0,
+          from: auth.accounts[0]
         })
         .then((res) => {
           console.log(res)
           toast.success(`Done`)
           toast.dismiss(t)
           e.target.disabled = false
+
+          // Refetch info
+          getReward(auth.contextAccounts[0]).then((res) => {
+            console.log(res)
+            setReward(res)
+
+            if (res.rewardTokenAddress !== `0x0000000000000000000000000000000000000000`) {
+              get_lsp7(res.rewardTokenAddress).then((res) => {
+                console.log(res)
+                setTokenDetails(res)
+              })
+            }
+          })
         })
         .catch((error) => {
           console.log(error)
@@ -182,18 +195,17 @@ function Home() {
             <img src={ConnectArrow} />
           </figure>
         )}
-
         <main className={`${styles.main}`}>
           <div className={`__container`} data-width={`small`}>
             <figure className={`d-f-c grid--gap-1`}>
               <img src={Coin} className={`rounded`} style={{ width: `84px` }} alt="" />
-              <figcaption>{reward && _.toNumber(reward.rewardAmount)}</figcaption>
+              <figcaption>{reward && <>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`))}</>}</figcaption>
             </figure>
 
             {reward && (
               <>
                 <h2>
-                  ⚡ {_.toNumber(reward.claimInterval) / 60 / 60}h / {web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`)} {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
+                  ⚡ {_.toNumber(reward.claimInterval) / 60 / 60}h / {new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`))} {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
                 </h2>
                 {/* _.toNumber(reward.claimInterval) */}
                 {auth.walletConnected && <NextClaim />}
@@ -202,10 +214,12 @@ function Home() {
 
             {reward && tokenDetails && (
               <div className={`${styles.progressbar}`}>
-                <div style={{ '--w': `${(web3Readonly.utils.fromWei(_.toNumber(reward.totalAmount), `ether`) / web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`)) * 100}%` }} />
+                <div style={{ '--w': `${ web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`)* 100 / web3Readonly.utils.fromWei(_.toNumber(reward.totalAmount), `ether`) }%` }}>
                 <span>
-                  {new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount),`ether`))} {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
+                  {new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`))} {tokenDetails && <>${tokenDetails.data.Asset[0].lsp4TokenSymbol}</>}
                 </span>
+                </div>
+          
               </div>
             )}
 
@@ -215,7 +229,7 @@ function Home() {
                 disabled={!auth.walletConnected}
                 //  disabled={reward && reward.rewardTokenAddress === `0x0000000000000000000000000000000000000000`}>
               >
-                Claim
+                {reward && reward.isClaimingEnabled ? `Claim` : `Claim (Not Active)`}
               </button>
               {auth.walletConnected && userType === 'owner' && (
                 <button onClick={(e) => navigate(`deposit`)} disabled={!auth.walletConnected}>
@@ -223,7 +237,13 @@ function Home() {
                 </button>
               )}
             </div>
+
+            
           </div>
+
+          <figure className={`d-f-c mt-20`}>
+            <img src={Aratta} />
+          </figure>
         </main>
       </div>
     </>

@@ -35,6 +35,7 @@ function Deposit() {
   const [rewardAmount, setRewardAmount] = useState()
   const [claimInterval, setClaimInterval] = useState()
   const [lsp7list, setLsp7list] = useState([])
+  const [tokenDetails, setTokenDetails] = useState()
 
   const canvasRef = useRef()
   const navigate = useNavigate()
@@ -102,7 +103,7 @@ function Deposit() {
   const getTokenIdsOf = async (addr) => await contractReadonly.methods.tokenIdsOf(addr).call()
 
   const deposit = async (e) => {
-  //  e.target.disabled = true
+    //  e.target.disabled = true
     const web3 = new Web3(auth.provider)
     const contract = new web3.eth.Contract(ABI, import.meta.env.VITE_CONTRACT)
     const lsp7Contract = new web3.eth.Contract(ABILSP7, rewardTokenAddress)
@@ -195,6 +196,11 @@ function Deposit() {
           toast.success(`Done`)
           toast.dismiss(t)
           e.target.disabled = false
+
+          getReward(auth.contextAccounts[0]).then((res) => {
+            console.log(res)
+            setReward(res)
+          })
         })
         .catch((error) => {
           console.log(error)
@@ -395,6 +401,28 @@ function Deposit() {
     getReward(auth.contextAccounts[0]).then((res) => {
       console.log(res)
       setReward(res)
+
+      if (res.rewardTokenAddress !== `0x0000000000000000000000000000000000000000`) {
+        get_lsp7(res.rewardTokenAddress.toLowerCase()).then(async (res) => {
+          console.log(res)
+          setTokenDetails(res)
+
+          const svg = document.querySelector('svg g#logo')
+          const svgns = 'http://www.w3.org/2000/svg'
+          const gRef = document.createElementNS(svgns, 'g')
+
+          const image = document.createElementNS(svgns, 'image')
+          image.setAttribute('href', `${res.data.Asset[0].icons[0].src}`)
+          image.setAttribute('width', 140)
+          image.setAttribute('height', 140)
+          image.setAttribute('x', 5)
+          image.setAttribute('y', 50)
+
+          gRef.appendChild(image)
+
+          svg.appendChild(gRef)
+        })
+      }
     })
 
     auth.accounts[0] === auth.contextAccounts[0] ? setUserType(`owner`) : setUserType(`visitor`)
@@ -408,30 +436,73 @@ function Deposit() {
         <main className={`${styles.main}`}>
           <div className={`__container`} data-width={`medium`}>
             {reward && (
-              <ul className={`d-flex flex-column mb-20`}>
-                <li>
-                  <span>Reward Token Address: </span>
-                  <a href={`https://universaleverything.io/asset/${reward.rewardTokenAddress}`} target={`_blank`}>
-                    {reward.rewardTokenAddress}
-                  </a>
-                </li>
-                <li>
-                  <span>Total amount: </span>
-                  <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.totalAmount), `ether`))}</b>
-                </li>
-                <li>
-                  <span>Reward Amount: </span>
-                  <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`))}</b>
-                </li>
-                <li>
-                  <span>Remainder Amount: </span>
-                  <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`))}</b>
-                </li>
-                <li>
-                  <span>Claiming Stauts: </span>
-                  {reward.isClaimingEnabled ? <span className={`badge badge-pill badge-success`}>Active</span> : <span className={`badge badge-pill badge-danger`}>Paused</span>}
-                </li>
-              </ul>
+              <div className={`d-flex align-items-center justify-content-between`}>
+                <ul className={`d-flex flex-column mb-20`}>
+                  <li>
+                    <span>Reward Token Address: </span>
+                    <a href={`https://universaleverything.io/asset/${reward.rewardTokenAddress}`} target={`_blank`} title={reward.rewardTokenAddress}>
+                      View
+                    </a>
+                  </li>
+                  <li>
+                    <span>Total amount: </span>
+                    <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.totalAmount), `ether`))}</b>
+                  </li>
+                  <li>
+                    <span>Reward Amount: </span>
+                    <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.rewardAmount), `ether`))}</b>
+                  </li>
+                  <li>
+                    <span>Remainder Amount: </span>
+                    <b>{new Intl.NumberFormat({ maximumSignificantDigits: 3 }).format(web3Readonly.utils.fromWei(_.toNumber(reward.remainderAmount), `ether`))}</b>
+                  </li>
+                  <li>
+                    <span>Claiming Stauts: </span>
+                    {reward.isClaimingEnabled ? <span className={`badge badge-pill badge-success`}>Active</span> : <span className={`badge badge-pill badge-danger`}>Paused</span>}
+                  </li>
+                </ul>
+
+                <svg width="151" height="216" viewBox="0 0 151 216" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g id={`logo`}></g>
+                  <path
+                    d="M143.365 46.2388C136.229 33.8852 120.789 32.3623 118.704 30.0955C116.954 27.5015 115.858 24.5233 115.509 21.4126L30.3352 21.1772C30.3352 21.1772 30.8762 29.2056 26.9972 31.9025C23.2103 34.5533 6.43946 36.7471 3.32333 57.5131C0.142292 78.7742 -7.43704 199.962 21.3222 209.506C50.0815 219.049 125.488 219.536 140.449 199.987C155.41 180.438 152.651 62.3307 143.365 46.2388ZM137.401 195.794H137.406C123.164 214.477 51.2987 214.017 23.873 204.888C-3.5527 195.759 3.6831 79.9265 6.7289 59.6203C9.69084 39.7631 27.2677 35.4865 30.8708 32.9655C30.8708 32.9655 38.2824 30.155 73.3713 29.9332C98.8494 29.7709 113.234 31.8754 120.906 34.2179C126.708 36.9472 135.269 40.3257 140.173 48.8302C149.032 64.2242 151.659 177.103 137.401 195.794Z"
+                    fill="#88C9F2"
+                    fill-opacity="0.5"
+                  />
+                  <path
+                    d="M24.9182 4.87007C21.187 7.69677 20.3449 25.371 21.7553 26.5642C26.1144 30.2508 109.785 31.2208 122.552 26.8618C126.67 25.4603 120.312 5.14084 115.727 3.23951C113.135 2.16834 91.896 0.299755 70.916 0.0200552C49.4807 -0.256659 28.2061 2.3796 24.9182 4.87007Z"
+                    fill="#FCBB01"
+                  />
+                  <path
+                    d="M24.9182 4.87007C21.187 7.69677 20.3449 25.371 21.7553 26.5642C26.1144 30.2508 109.785 31.2208 122.552 26.8618C126.67 25.4603 120.312 5.14084 115.727 3.23951C113.135 2.16834 91.896 0.299755 70.916 0.0200552C49.4807 -0.256659 28.2061 2.3796 24.9182 4.87007Z"
+                    fill="url(#paint0_linear_9215_909)"
+                  />
+                  <path
+                    d="M117.014 4.20369C116.654 3.80498 116.217 3.48364 115.729 3.25453C113.137 2.18335 91.8984 0.314754 70.9183 0.0350659C49.9889 -0.247607 29.2409 2.25773 25.1973 4.69464C56.3088 7.14643 92.431 7.33686 117.014 4.20369Z"
+                    fill="#9C2E55"
+                    fill-opacity="0.32"
+                  />
+                  <path
+                    d="M140.067 49.0126C148.931 64.3957 151.561 177.296 137.3 195.99C123.039 214.684 51.1764 214.219 23.7453 205.087C-3.68585 195.955 3.55265 80.1035 6.59845 59.7919C8.27283 46.7269 17.9106 36.0882 30.7457 33.1317C39.5261 30.7053 78.6643 27.0861 113.826 32.6989C119.242 33.5645 133.267 37.2027 140.067 49.0126Z"
+                    fill="#C9DFF2"
+                    fill-opacity="0.2"
+                  />
+
+                  <g>
+                    <path
+                      d="M134.583 174.424C133.507 175.839 132 177.14 130.182 178.306C139.901 155.931 137.589 71.7005 130.631 59.6715C124.975 49.8632 113.349 46.8337 108.862 46.1141C79.6859 41.4697 47.21 44.4776 39.9147 46.4739C36.0764 47.372 32.5518 49.1004 29.5898 51.4565C33.1144 45.419 39.0627 40.9314 46.1767 39.2922C53.4477 37.2959 85.9263 34.2853 115.102 38.9324C119.59 39.652 131.237 42.6788 136.872 52.4654C144.232 65.2356 146.412 158.917 134.583 174.424Z"
+                      fill="white"
+                    />
+                  </g>
+
+                  <defs>
+                    <linearGradient id="paint0_linear_9215_909" x1="40.9902" y1="3.49067" x2="51.1332" y2="40.3356" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#FBA7C5" />
+                      <stop offset="0.452271" stopColor="#FCE1EA" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
             )}
 
             <div className={`form d-flex flex-column grid--gap-050 mb-30`}>
@@ -469,12 +540,12 @@ function Deposit() {
             </div>
 
             {auth.walletConnected && (
-              <div className={`${styles.action} d-f-c flex-column w-100`}>
+              <div className={`${styles.action} grid grid--fill`} style={{ '--data-width': `300px` }}>
                 <button onClick={(e) => deposit(e)} disabled={rewardTokenAddress === undefined || totalAmount === undefined || rewardAmount === undefined || claimInterval === undefined}>
                   Approve & Deposit
                 </button>
                 <button onClick={(e) => stopWithdraw(e)}>Stop & Withdraw</button>
-                <button onClick={(e) => pause(e)}>Pause</button>
+                <button onClick={(e) => pause(e)}>{reward && reward.isClaimingEnabled ? `Stop` : `Start`}</button>
                 <button onClick={(e) => navigate(`../`)}>Back</button>
               </div>
             )}
